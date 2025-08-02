@@ -602,7 +602,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <a
-                href="mailto:divyparekh97@gmail.com"
+                href="mailto:divyparekh1810@gmail.com"
                 className="px-4 sm:px-6 py-2 sm:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-opacity text-center"
               >
                 Send Email
