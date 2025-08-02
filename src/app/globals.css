@@ -1,26 +1,478 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-work-sans);
+  --font-display: var(--font-playwrite-hu);
+  --font-mono: var(--font-work-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  
+  /* Portfolio Color Palette */
+  --cream: #F3E2D4;
+  --lavender: #C5B0CD;
+  --slate-blue: #415E72;
+  --dark-blue: #17313E;
+  
+  /* Light Theme */
+  --background: var(--cream);
+  --foreground: var(--dark-blue);
+  --card: #ffffff;
+  --card-foreground: var(--dark-blue);
+  --popover: #ffffff;
+  --popover-foreground: var(--dark-blue);
+  --primary: var(--slate-blue);
+  --primary-foreground: var(--cream);
+  --secondary: var(--lavender);
+  --secondary-foreground: var(--dark-blue);
+  --muted: var(--lavender);
+  --muted-foreground: var(--slate-blue);
+  --accent: var(--lavender);
+  --accent-foreground: var(--dark-blue);
+  --destructive: #ef4444;
+  --border: var(--lavender);
+  --input: var(--lavender);
+  --ring: var(--slate-blue);
+  --chart-1: var(--cream);
+  --chart-2: var(--lavender);
+  --chart-3: var(--slate-blue);
+  --chart-4: var(--dark-blue);
+  --chart-5: #8b5cf6;
+  --sidebar: var(--cream);
+  --sidebar-foreground: var(--dark-blue);
+  --sidebar-primary: var(--slate-blue);
+  --sidebar-primary-foreground: var(--cream);
+  --sidebar-accent: var(--lavender);
+  --sidebar-accent-foreground: var(--dark-blue);
+  --sidebar-border: var(--lavender);
+  --sidebar-ring: var(--slate-blue);
+}
+
+.dark {
+  /* Dark Theme */
+  --background: var(--dark-blue);
+  --foreground: var(--cream);
+  --card: var(--slate-blue);
+  --card-foreground: var(--cream);
+  --popover: var(--slate-blue);
+  --popover-foreground: var(--cream);
+  --primary: var(--lavender);
+  --primary-foreground: var(--dark-blue);
+  --secondary: var(--slate-blue);
+  --secondary-foreground: var(--cream);
+  --muted: var(--slate-blue);
+  --muted-foreground: var(--lavender);
+  --accent: var(--slate-blue);
+  --accent-foreground: var(--cream);
+  --destructive: #f87171;
+  --border: rgba(243, 226, 212, 0.1);
+  --input: rgba(243, 226, 212, 0.15);
+  --ring: var(--lavender);
+  --chart-1: var(--cream);
+  --chart-2: var(--lavender);
+  --chart-3: var(--slate-blue);
+  --chart-4: var(--dark-blue);
+  --chart-5: #a78bfa;
+  --sidebar: var(--slate-blue);
+  --sidebar-foreground: var(--cream);
+  --sidebar-primary: var(--lavender);
+  --sidebar-primary-foreground: var(--dark-blue);
+  --sidebar-accent: var(--slate-blue);
+  --sidebar-accent-foreground: var(--cream);
+  --sidebar-border: rgba(243, 226, 212, 0.1);
+  --sidebar-ring: var(--lavender);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--lavender);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--slate-blue);
+  }
+  
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  
+  /* Firefox scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--lavender) transparent;
+  }
+  
+  /* Responsive improvements */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Improve touch targets on mobile */
+  @media (max-width: 768px) {
+    button, a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  
+  /* Slightly smaller font size on mobile for better readability */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .grid-cols-53 {
+    grid-template-columns: repeat(53, minmax(0, 1fr));
+  }
+  .grid-cols-52 {
+    grid-template-columns: repeat(52, minmax(0, 1fr));
+  }
+  .grid-cols-51 {
+    grid-template-columns: repeat(51, minmax(0, 1fr));
+  }
+  .grid-cols-50 {
+    grid-template-columns: repeat(50, minmax(0, 1fr));
+  }
+  .grid-cols-49 {
+    grid-template-columns: repeat(49, minmax(0, 1fr));
+  }
+  .grid-cols-48 {
+    grid-template-columns: repeat(48, minmax(0, 1fr));
+  }
+  .grid-cols-47 {
+    grid-template-columns: repeat(47, minmax(0, 1fr));
+  }
+  .grid-cols-46 {
+    grid-template-columns: repeat(46, minmax(0, 1fr));
+  }
+  .grid-cols-45 {
+    grid-template-columns: repeat(45, minmax(0, 1fr));
+  }
+  .grid-cols-44 {
+    grid-template-columns: repeat(44, minmax(0, 1fr));
+  }
+  .grid-cols-43 {
+    grid-template-columns: repeat(43, minmax(0, 1fr));
+  }
+  .grid-cols-42 {
+    grid-template-columns: repeat(42, minmax(0, 1fr));
+  }
+  .grid-cols-41 {
+    grid-template-columns: repeat(41, minmax(0, 1fr));
+  }
+  .grid-cols-40 {
+    grid-template-columns: repeat(40, minmax(0, 1fr));
+  }
+  .grid-cols-39 {
+    grid-template-columns: repeat(39, minmax(0, 1fr));
+  }
+  .grid-cols-38 {
+    grid-template-columns: repeat(38, minmax(0, 1fr));
+  }
+  .grid-cols-37 {
+    grid-template-columns: repeat(37, minmax(0, 1fr));
+  }
+  .grid-cols-36 {
+    grid-template-columns: repeat(36, minmax(0, 1fr));
+  }
+  .grid-cols-35 {
+    grid-template-columns: repeat(35, minmax(0, 1fr));
+  }
+  .grid-cols-34 {
+    grid-template-columns: repeat(34, minmax(0, 1fr));
+  }
+  .grid-cols-33 {
+    grid-template-columns: repeat(33, minmax(0, 1fr));
+  }
+  .grid-cols-32 {
+    grid-template-columns: repeat(32, minmax(0, 1fr));
+  }
+  .grid-cols-31 {
+    grid-template-columns: repeat(31, minmax(0, 1fr));
+  }
+  .grid-cols-30 {
+    grid-template-columns: repeat(30, minmax(0, 1fr));
+  }
+  .grid-cols-29 {
+    grid-template-columns: repeat(29, minmax(0, 1fr));
+  }
+  .grid-cols-28 {
+    grid-template-columns: repeat(28, minmax(0, 1fr));
+  }
+  .grid-cols-27 {
+    grid-template-columns: repeat(27, minmax(0, 1fr));
+  }
+  .grid-cols-26 {
+    grid-template-columns: repeat(26, minmax(0, 1fr));
+  }
+  .grid-cols-25 {
+    grid-template-columns: repeat(25, minmax(0, 1fr));
+  }
+  .grid-cols-24 {
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+  }
+  .grid-cols-23 {
+    grid-template-columns: repeat(23, minmax(0, 1fr));
+  }
+  .grid-cols-22 {
+    grid-template-columns: repeat(22, minmax(0, 1fr));
+  }
+  .grid-cols-21 {
+    grid-template-columns: repeat(21, minmax(0, 1fr));
+  }
+  .grid-cols-20 {
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+  }
+  .grid-cols-19 {
+    grid-template-columns: repeat(19, minmax(0, 1fr));
+  }
+  .grid-cols-18 {
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+  }
+  .grid-cols-17 {
+    grid-template-columns: repeat(17, minmax(0, 1fr));
+  }
+  .grid-cols-16 {
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+  }
+  .grid-cols-15 {
+    grid-template-columns: repeat(15, minmax(0, 1fr));
+  }
+  .grid-cols-14 {
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+  }
+  .grid-cols-13 {
+    grid-template-columns: repeat(13, minmax(0, 1fr));
+  }
+  .grid-cols-12 {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+  .grid-cols-11 {
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+  }
+  .grid-cols-10 {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+  .grid-cols-9 {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+  .grid-cols-8 {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  .grid-cols-7 {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+  .grid-cols-6 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+/* Custom Font Classes */
+.playwrite-hu-100 {
+  font-family: var(--font-playwrite-hu);
+  font-weight: 100;
+  font-style: normal;
+}
+
+.playwrite-hu-200 {
+  font-family: var(--font-playwrite-hu);
+  font-weight: 200;
+  font-style: normal;
+}
+
+.playwrite-hu-300 {
+  font-family: var(--font-playwrite-hu);
+  font-weight: 300;
+  font-style: normal;
+}
+
+.playwrite-hu-400 {
+  font-family: var(--font-playwrite-hu);
+  font-weight: 400;
+  font-style: normal;
+}
+
+.work-sans-100 {
+  font-family: var(--font-work-sans);
+  font-weight: 100;
+  font-style: normal;
+}
+
+.work-sans-200 {
+  font-family: var(--font-work-sans);
+  font-weight: 200;
+  font-style: normal;
+}
+
+.work-sans-300 {
+  font-family: var(--font-work-sans);
+  font-weight: 300;
+  font-style: normal;
+}
+
+.work-sans-400 {
+  font-family: var(--font-work-sans);
+  font-weight: 400;
+  font-style: normal;
+}
+
+.work-sans-500 {
+  font-family: var(--font-work-sans);
+  font-weight: 500;
+  font-style: normal;
+}
+
+.work-sans-600 {
+  font-family: var(--font-work-sans);
+  font-weight: 600;
+  font-style: normal;
+}
+
+.work-sans-700 {
+  font-family: var(--font-work-sans);
+  font-weight: 700;
+  font-style: normal;
+}
+
+.work-sans-800 {
+  font-family: var(--font-work-sans);
+  font-weight: 800;
+  font-style: normal;
+}
+
+.work-sans-900 {
+  font-family: var(--font-work-sans);
+  font-weight: 900;
+  font-style: normal;
+}
+
+.work-sans-100-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 100;
+  font-style: italic;
+}
+
+.work-sans-200-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 200;
+  font-style: italic;
+}
+
+.work-sans-300-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 300;
+  font-style: italic;
+}
+
+.work-sans-400-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.work-sans-500-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 500;
+  font-style: italic;
+}
+
+.work-sans-600-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 600;
+  font-style: italic;
+}
+
+.work-sans-700-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 700;
+  font-style: italic;
+}
+
+.work-sans-800-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 800;
+  font-style: italic;
+}
+
+.work-sans-900-italic {
+  font-family: var(--font-work-sans);
+  font-weight: 900;
+  font-style: italic;
 }
