@@ -78,7 +78,9 @@ export default function GitHubGraphSimple({ username }: GitHubGraphProps) {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-32">
-        <div className="work-sans-400 text-muted-foreground">Loading contributions...</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="text-4xl animate-bounce">🐱</div>
+        </div>
       </div>
     );
   }
