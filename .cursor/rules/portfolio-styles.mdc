@@ -1,0 +1,157 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Portfolio Design System
+
+This document outlines the design system for the portfolio website, including color palette, typography, and component guidelines.
+
+## Color Palette
+
+The portfolio uses a carefully selected color palette with four main colors:
+
+### Primary Colors
+- **Cream** (`#F3E2D4`) - Light, warm beige background color
+- **Lavender** (`#C5B0CD`) - Soft, muted purple accent color  
+- **Slate Blue** (`#415E72`) - Medium-dark blue primary color
+- **Dark Blue** (`#17313E`) - Very dark blue, almost black text color
+
+### Color Usage
+- **Background**: Use cream (`#F3E2D4`) for main backgrounds
+- **Text**: Use dark blue (`#17313E`) for primary text
+- **Accents**: Use lavender (`#C5B0CD`) for subtle accents and borders
+- **Primary Actions**: Use slate blue (`#415E72`) for buttons and primary elements
+- **Cards**: Use white backgrounds with dark blue text
+
+### CSS Variables
+The colors are defined as CSS variables in [globals.css](mdc:src/app/globals.css):
+```css
+--cream: #F3E2D4;
+--lavender: #C5B0CD;
+--slate-blue: #415E72;
+--dark-blue: #17313E;
+```
+
+## Typography
+
+The portfolio uses two Google Fonts:
+
+### Display Font: Playwrite HU
+- **Usage**: Headings, titles, and display text
+- **Weights**: 100, 200, 300, 400
+- **Style**: Cursive, elegant handwriting style
+
+### Body Font: Work Sans
+- **Usage**: Body text, paragraphs, and UI elements
+- **Weights**: 100-900 (all weights)
+- **Styles**: Normal and italic
+- **Style**: Clean, modern sans-serif
+
+### Font Classes
+Custom font classes are defined in [globals.css](mdc:src/app/globals.css):
+
+#### Playwrite HU Classes
+- `.playwrite-hu-100` - Ultra light
+- `.playwrite-hu-200` - Extra light  
+- `.playwrite-hu-300` - Light
+- `.playwrite-hu-400` - Regular
+
+#### Work Sans Classes
+- `.work-sans-100` through `.work-sans-900` - All weights
+- `.work-sans-100-italic` through `.work-sans-900-italic` - All weights with italic
+
+### Typography Guidelines
+- **Main Headings**: Use Playwrite HU 400 for page titles
+- **Section Headings**: Use Playwrite HU 300 for section titles
+- **Body Text**: Use Work Sans 400 for paragraphs
+- **Emphasis**: Use Work Sans 600 for bold text
+- **Captions**: Use Work Sans 300 for subtle text
+
+## Component Guidelines
+
+### Layout
+- Use minimal, clean layouts with plenty of white space
+- Maintain consistent spacing using Tailwind's spacing scale
+- Use grid and flexbox for responsive layouts
+
+### Cards
+- White background with subtle borders
+- Rounded corners (border-radius: 0.625rem)
+- Use lavender for borders and subtle accents
+
+### Buttons
+- Primary buttons: Slate blue background with cream text
+- Secondary buttons: Lavender background with dark blue text
+- Hover states: Slightly darker shades of the base colors
+
+### Navigation
+- Clean, minimal navigation
+- Use Work Sans for navigation text
+- Consider using Playwrite HU for brand/logo text
+
+## File Structure
+
+### Key Files
+- [layout.tsx](mdc:src/app/layout.tsx) - Font configuration and metadata
+- [globals.css](mdc:src/app/globals.css) - Color variables, font classes, and theme configuration
+- [page.tsx](mdc:src/app/page.tsx) - Main page with design system demo
+
+### Configuration
+- [components.json](mdc:components.json) - shadcn/ui configuration
+- [package.json](mdc:package.json) - Dependencies including Tailwind CSS v4
+
+## Development Guidelines
+
+### Adding New Components
+1. Use the established color palette and typography
+2. Follow the minimal and classic design principles
+3. Ensure responsive design for all screen sizes
+4. Use semantic HTML and accessible markup
+
+### Styling Approach
+- Use Tailwind CSS utility classes for styling
+- Leverage CSS variables for consistent theming
+- Use custom font classes for typography
+- Maintain the established color hierarchy
+
+### Dark Mode
+The design system includes dark mode support with inverted color schemes:
+- Dark backgrounds use dark blue
+- Light text uses cream
+- Accent colors are adjusted for better contrast
+
+## Best Practices
+
+1. **Consistency**: Always use the established color palette and typography
+2. **Accessibility**: Ensure sufficient color contrast ratios
+3. **Performance**: Fonts are optimized with Next.js font optimization
+4. **Responsive**: Design for mobile-first approach
+5. **Minimal**: Keep the design clean and uncluttered
+6. **Classic**: Maintain timeless design principles
+
+## Example Usage
+
+```tsx
+// Heading with display font
+<h1 className="playwrite-hu-400 text-6xl text-foreground">
+  Portfolio Title
+</h1>
+
+// Body text with body font
+<p className="work-sans-400 text-lg text-foreground">
+  This is body text using Work Sans.
+</p>
+
+// Card component
+<div className="p-6 bg-card rounded-lg border">
+  <h3 className="work-sans-600 text-lg text-card-foreground">
+    Card Title
+  </h3>
+</div>
+
+// Primary button
+<button className="bg-primary text-primary-foreground px-4 py-2 rounded-lg work-sans-600">
+  Primary Action
+</button>
+```
