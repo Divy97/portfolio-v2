@@ -153,11 +153,8 @@ export default function WorkExperience() {
               onMouseEnter={() => setHoveredId(job.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              {/* Timeline dot - Hidden on mobile */}
-              <div className="absolute left-6 top-6 w-3 h-3 bg-primary rounded-full transform -translate-x-1.5 transition-all duration-300 group-hover:scale-125 group-hover:bg-secondary hidden sm:block"></div>
-              
               {/* Content card */}
-              <div className="sm:ml-12">
+              <div className=''>
                 <div 
                   className="bg-card rounded-lg border p-4 sm:p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-primary/30"
                   onClick={() => toggleExpanded(job.id)}

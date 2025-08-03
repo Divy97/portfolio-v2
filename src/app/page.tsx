@@ -250,8 +250,6 @@ export default function Home() {
         {/* GitHub Activity Graph */}
         <div className="relative">
           <GitHubGraphSimple username="divy97" />
-          
-   
         </div>
 
         {/* About Section */}
