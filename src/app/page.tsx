@@ -215,6 +215,22 @@ export default function Home() {
         </div>
       </div>
 
+      {/* View Resume Button - Fixed Position Top Right */}
+      <div className="fixed top-4 sm:top-6 lg:top-8 right-4 sm:right-6 lg:right-8 z-20">
+        <a
+          href="https://drive.google.com/file/d/1aVtWGmOqTici3BNTgG8pIyzzo5GXULW0/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span className="hidden sm:inline">View Resume</span>
+          <span className="sm:hidden">Resume</span>
+        </a>
+      </div>
+
       <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
         {/* Fun Header with Meme */}
         <header className="text-center space-y-4 sm:space-y-6">
