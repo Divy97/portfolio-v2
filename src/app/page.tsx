@@ -216,14 +216,14 @@ export default function Home() {
       </div>
 
       {/* View Resume Button - Fixed Position Top Right */}
-      <div className="fixed top-4 sm:top-6 lg:top-8 right-4 sm:right-6 lg:right-8 z-20">
+      <div className="fixed top-2 sm:top-4 lg:top-6 right-2 sm:right-4 lg:right-6 z-20">
         <a
           href="https://drive.google.com/file/d/1aVtWGmOqTici3BNTgG8pIyzzo5GXULW0/view?usp=sharing"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm lg:text-base"
         >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
           <span className="hidden sm:inline">View Resume</span>
@@ -231,7 +231,7 @@ export default function Home() {
         </a>
       </div>
 
-      <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12">
+      <div className="max-w-6xl mx-auto space-y-8 sm:space-y-12 mt-16 sm:mt-20 lg:mt-24">
         {/* Fun Header with Meme */}
         <header className="text-center space-y-4 sm:space-y-6">
           <div className="flex flex-col items-center gap-4 sm:gap-6">
