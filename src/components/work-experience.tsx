@@ -224,13 +224,7 @@ export default function WorkExperience() {
                         {job.projects.map((project, projectIndex) => (
                                                       <div
                               key={project.id}
-                              className={`rounded-lg border p-3 sm:p-4 transition-all duration-200 hover:shadow-md ${
-                                projectIndex % 3 === 0 
-                                  ? 'bg-gradient-to-br from-lavender/5 to-lavender/15 border-lavender/30' 
-                                  : projectIndex % 3 === 1 
-                                  ? 'bg-gradient-to-br from-slate-blue/5 to-slate-blue/15 border-slate-blue/30' 
-                                  : 'bg-gradient-to-br from-cream/10 to-cream/20 border-cream/40'
-                              }`}
+                              className="bg-card rounded-lg border p-3 sm:p-4 transition-all duration-200 hover:shadow-md"
                             >
                               {/* Project Header */}
                               <div className="flex items-start justify-between mb-2 sm:mb-3">
