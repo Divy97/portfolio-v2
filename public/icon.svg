@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Laptop Icon">
+  <!-- Laptop base -->
+  <rect x="96" y="320" width="320" height="48" rx="12" fill="#F3E2D4"/>
+  <!-- Laptop screen -->
+  <rect x="128" y="144" width="256" height="160" rx="16" fill="#F3E2D4"/>
+  <!-- Screen border (slate blue) -->
+  <rect x="128" y="144" width="256" height="160" rx="16" fill="none" stroke="#17313E" stroke-width="8"/>
+  <!-- Keyboard line -->
+  <rect x="128" y="352" width="256" height="8" rx="4" fill="#C5B0CD"/>
+  <!-- Touchpad -->
+  <rect x="224" y="368" width="64" height="16" rx="4" fill="#C5B0CD"/>
+</svg>
