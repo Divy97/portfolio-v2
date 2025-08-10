@@ -219,7 +219,7 @@ export default function Home() {
       {/* View Resume Button - Fixed Position Top Right */}
       <div className="fixed top-2 sm:top-4 lg:top-6 right-2 sm:right-4 lg:right-6 z-20">
         <a
-          href="https://drive.google.com/file/d/1aVtWGmOqTici3BNTgG8pIyzzo5GXULW0/view?usp=sharing"
+          href="https://drive.google.com/file/d/1espru8KNtfCqlsF_0dPmwuyklXUdZmaF/view?usp=sharing"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm lg:text-base transition-transform hover:-translate-y-0.5 active:scale-[.98]"
