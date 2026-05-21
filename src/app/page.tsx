@@ -28,15 +28,15 @@ const projectsData: ProjectsData = {
     {
       id: 1,
       name: "Quizito - AI-Powered Quiz Generation Platform",
-      description: "A full-stack web application that transforms any content (articles, documents, videos, topics) into engaging, intelligent quizzes using advanced AI. Generate quiz in 30 seconds",
+      description: "Async AI quiz-generation platform that turns PDFs, URLs, and YouTube transcripts into high-quality quizzes without blocking long-running jobs.",
       githubUrl: "https://github.com/Divy97/quizito",
       liveUrl: "https://quizito.vercel.app/",
-      techStack: ["Next.js 15", "TypeScript", "LangChain", "PostgreSQL", "AWS Lambda", "AWS S3","AWS SQS", "Framer Motion"],
+      techStack: ["Next.js 15", "TypeScript", "LangChain", "PostgreSQL", "AWS Lambda", "AWS S3", "AWS SQS", "AWS KMS", "Redis"],
       keyFeatures: [
-        "AI-powered quiz generation from multiple sources (PDF, URLs, YouTube, topics)",
-        "Implemented sophisticated AI pipeline using LangChain framework, integrating multiple AI models (Claude 3.5, Google Generative AI) for question generation, semantic similarity analysis, and quality refinement",
-        "Scalable serverless architecture with AWS Lambda and SQS queues",
-        "Modern glassmorphism UI with real-time feedback and leaderboards"
+        "Built async quiz generation pipeline for PDFs, URLs, and YouTube transcripts with non-blocking job processing",
+        "Designed Bloom's-taxonomy-weighted generation with parallel LLM calls and a refinement pass for stronger question quality",
+        "Added embedding-based semantic deduplication to reduce near-duplicate questions while keeping topic coverage",
+        "Shipped BYOK with AWS KMS envelope encryption plus Lambda + SQS + DLQ backend and Redis rate limiting"
       ]
     },
     {
@@ -203,9 +203,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen p-4 sm:p-6 lg:p-8 relative">
-      {/* Sneaking Cat - Fixed Position - Hidden on mobile */}
-      <div className="fixed left-[-7%] top-1/2 transform -translate-y-1/2 z-10 pointer-events-none hidden lg:block">
-        <div className="relative w-110 h-110 animate-float-slow">
+      {/* Sneaking Cat - small peek on mobile, side peek on desktop */}
+      <div className="fixed left-[-1.75rem] bottom-3 z-10 pointer-events-none sm:left-[-2.5rem] sm:bottom-4 lg:left-[-4.5rem] lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
+        <div className="relative w-24 h-24 opacity-90 animate-float-slow sm:w-32 sm:h-32 lg:w-80 lg:h-80">
           <Image
             src="/image.png"
             alt="Sneaking cat peeking from the left"
@@ -219,7 +219,7 @@ export default function Home() {
       {/* View Resume Button - Fixed Position Top Right */}
       <div className="fixed top-2 sm:top-4 lg:top-6 right-2 sm:right-4 lg:right-6 z-20">
         <a
-          href="https://drive.google.com/file/d/1espru8KNtfCqlsF_0dPmwuyklXUdZmaF/view?usp=sharing"
+          href="https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view?usp=sharing"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 sm:gap-2 lg:gap-3 px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 lg:py-3 bg-primary text-primary-foreground rounded-lg work-sans-600 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-xl text-xs sm:text-sm lg:text-base transition-transform hover:-translate-y-0.5 active:scale-[.98]"
@@ -265,9 +265,9 @@ export default function Home() {
             </h2>
             <div className="p-4 sm:p-6 bg-card rounded-lg border">
               <p className="work-sans-400 text-base sm:text-lg text-card-foreground leading-relaxed">
-                A software engineer who builds things that <span className="text-red-500 font-bold">(mostly)</span> work and break things just to fix them better😅. 
-                Currently obsessed with <span className="text-green-700 font-bold text-xl sm:text-2xl">AI AI AI</span>, and anything that lets me <span className="text-blue-500 font-semibold">dodge writing CSS</span>. 
-                When I&apos;m not coding, I&apos;m either reading oddly specific books or collecting memes to share with my colleagues.
+                Full-stack engineer with nearly <span className="text-red-500 font-bold">2 years</span> building SaaS products, payment systems, AI workflows, and cloud infrastructure.
+                Lately I spend most of my time on <span className="text-green-700 font-bold text-xl sm:text-2xl">backend systems, async processing, and AI/LLM pipelines</span>.
+                I still dodge CSS when I can, but I really like shipping hard stuff that has to work reliably.
               </p>
             </div>
           </section>
@@ -523,6 +523,7 @@ export default function Home() {
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">WXT</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">TypeScript</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">JavaScript</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Python</span>
                 </div>
               </div>
               
@@ -553,6 +554,7 @@ export default function Home() {
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">NodeJS</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">GraphQL</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">REST</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Stripe</span>
                 </div>
               </div>
               
@@ -565,9 +567,9 @@ export default function Home() {
                 </div>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">AWS Lambda</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">AWS Amplify</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">AWS S3</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">AWS SQS</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">AWS KMS</span>
                 </div>
               </div>
               
@@ -580,8 +582,9 @@ export default function Home() {
                 </div>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">PostgreSQL</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">MySQL</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">SQL</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">MongoDB</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Redis</span>
                 </div>
               </div>
               
@@ -595,8 +598,8 @@ export default function Home() {
                 <div className="flex flex-wrap gap-1 sm:gap-2">
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">LangChain</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">LangGraph</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Vercel AI SDK</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Google Analytics</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">LLM Pipelines</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Async Processing</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-secondary text-secondary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Sentry</span>
                 </div>
               </div>
@@ -610,13 +613,12 @@ export default function Home() {
                 </div>
                 <div className="flex flex-wrap gap-1 sm:gap-2">
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Prisma</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Redis</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">GIT</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">WXT</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Hasura</span>
-                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Firebase</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Vercel</span>
                   <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Sentry</span>
+                  <span className="px-3 sm:px-4 py-1 sm:py-2 bg-primary text-primary-foreground rounded-lg text-xs sm:text-sm work-sans-600 shadow-sm hover:shadow-md transition-all duration-200 transition-transform hover:-translate-y-0.5 active:scale-[.98]">Postman</span>
                 </div>
               </div>
             </div>

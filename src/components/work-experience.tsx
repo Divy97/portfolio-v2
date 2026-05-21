@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, Calendar, MapPin, Building2, ExternalLink, Code, Globe, Zap } from 'lucide-react';
+import { ChevronDown, ChevronUp, Calendar, MapPin, Building2, ExternalLink } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -28,35 +28,32 @@ const workData: WorkExperience[] = [
   {
     id: 1,
     company: "Raftlabs",
-    position: "Junior Software Engineer",
+    position: "Software Engineer",
     duration: "Aug 2024 - Present",
-    location: "Ahmedabad, India (Remote)",
-    description: "Working as a Junior Software Engineer on multiple AI-powered web applications and browser extensions, contributing across the entire product lifecycle - from architecture and development to deployment.",
+    location: "Remote",
+    description: "Building billing systems, AI workflows, browser extension features, and cloud infra for SaaS products with focus on backend systems and async processing.",
     projects: [
       {
         id: "draftly",
         name: "Draftly",
-        description: "AI-powered LinkedIn automation and content management platform",
-        technologies: ["NextJS", "Typescript", "Hasura", "GraphQL", "PostgreSQL", "AWS Lambda, SQS and S3", "Docker", "Playwright", "LangChain"],
+        description: "LinkedIn AI content platform",
+        technologies: ["NextJS", "TypeScript", "Hasura", "GraphQL", "PostgreSQL", "AWS Lambda", "AWS SQS", "AWS S3", "Docker", "WXT", "LangChain"],
         achievements: [ 
-            "Built and maintained a browser extension that integrates Draftly’s features directly into LinkedIn, enhancing user workflows with real-time content suggestions and engagement tools.",
-            "Developed robust scraping workflows using Playwright for seamless data extraction and automation on LinkedIn.",
-            "Designed and implemented the AI-driven comment generation feature using LangChain and OpenAI APIs, enabling contextual, persona-based interactions.",
-            "Integrated multi-input content repurposing flows to accept URLs, LinkedIn posts, and custom text inputs, enhancing content versatility.",
-            "Built a content scheduling calendar and performance analytics dashboard using GraphQL APIs and PostgreSQL for comprehensive campaign management.",
-            "Leveraged Next.js, TypeScript, Hasura, AWS Lambda/S3/SQS, and Docker for scalable backend and frontend solutions."        
+            "Built backend AI pipelines for YouTube, blog, X, news, and free-text inputs for a LinkedIn AI content platform used by 2K+ users.",
+            "Developed the Draftly browser extension with WXT, React, Chrome, and Firefox support for in-page LinkedIn AI features.",
+            "Added profile-context extraction, AI comment generation, and extension-to-webapp messaging for tighter product workflows."
         ],
         projectUrl: "https://www.draftly.so/"
       },
       {
-        id: "ai-raft",
-        name: "AIRaft",
-        description: "AI chatbot generation tool for document-based customer support",
-        technologies: ["NextJS", "TypeScript", "PostgreSQL", "GraphQL", "AWS Amplify", "Vercel AI SDK", "Vector DB" ],
+        id: "billing-and-infra",
+        name: "Billing and Infra",
+        description: "Stripe billing, credits, compliance retention, and data offboarding systems",
+        technologies: ["Stripe", "PostgreSQL", "AWS S3", "IAM"],
         achievements: [
-          "Developed backend systems to ingest and vectorize uploaded documents, sitemaps, and web pages for semantic search using Vector DBs.",
-          "Implemented an AI-powered chatbot interface using Vercel AI SDK to allow businesses to deploy support bots within minutes.",
-          "Integrated APIs with GraphQL and deployed on AWS Amplify for a scalable and serverless setup."            
+          "Built and maintained Stripe billing flows for checkout, subscriptions, invoices, renewals, coupons, and webhook reconciliation into PostgreSQL-backed billing state.",
+          "Built coupon and credit workflows supporting per-clinic and per-plan eligibility, first-time-use rules, recurring discounts, usage tracking, and automated expiry.",
+          "Developed HIPAA-aligned retention and offboarding workflows including 7-year audit-log retention, tenant exports, S3 archival, scoped IAM, and secure deletion across 50+ relational tables."
         ]
       }
     ],
@@ -111,7 +108,6 @@ export default function WorkExperience() {
   const [expandedProjects, setExpandedProjects] = useState<string[]>(
     workData.flatMap(job => job.projects.map(project => project.id))
   );
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const toggleExpanded = (id: number) => {
     setExpandedIds(prev => 
@@ -126,13 +122,7 @@ export default function WorkExperience() {
       prev.includes(projectId) 
         ? prev.filter(id => id !== projectId)
         : [...prev, projectId]
-    );
-  };
-
-  const getProjectIcon = (projectName: string) => {
-    if (projectName.toLowerCase().includes('draftly')) return <Globe className="w-5 h-5" />;
-    if (projectName.toLowerCase().includes('api')) return <Zap className="w-5 h-5" />;
-    return <Code className="w-5 h-5" />;
+      );
   };
 
   return (
@@ -146,12 +136,10 @@ export default function WorkExperience() {
         <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-lavender/30 hidden sm:block"></div>
         
         <div className="space-y-6 sm:space-y-8">
-          {workData.map((job, index) => (
+          {workData.map((job) => (
             <div
               key={job.id}
               className="relative group"
-              onMouseEnter={() => setHoveredId(job.id)}
-              onMouseLeave={() => setHoveredId(null)}
             >
               {/* Content card */}
               <div className=''>
@@ -221,7 +209,7 @@ export default function WorkExperience() {
                         Projects ({job.projects.length})
                       </h5>
                       <div className="space-y-3 sm:space-y-4">
-                        {job.projects.map((project, projectIndex) => (
+                        {job.projects.map((project) => (
                                                       <div
                               key={project.id}
                               className="bg-card rounded-lg border p-3 sm:p-4 transition-all duration-200 hover:shadow-md"
