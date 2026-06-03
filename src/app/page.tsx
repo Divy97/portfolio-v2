@@ -15,6 +15,7 @@ const C = {
     { date: "", text: "Z-value ne critical region me aake apni aukat dikha diya"}
   ],
   poetry: [
+    { body: "जो मेरे घर कभी नहीं आएंगे\nमैं उनसे मिलने\nउनके पास चला जाऊंगा।\nएक उफ़नती नदी कभी नहीं आएगी मेरे घर\nनदी जैसे लोगों से मिलने\nनदी किनारे जाऊंगा\nकुछ तैरूंगा और डूब जाऊंगा।\n\nपहाड़, टीले, चट्टानें, तालाब\nअसंख्य पेड़ खेत\nकभी नहीं आयेंगे मेरे घर\nखेत खलिहानों जैसे लोगों से मिलने\nगांव-गांव, जंगल-गलियां जाऊंगा।\n\nजो लगातार काम से लगे हैं\nमैं फुरसत से नहीं\nउनसे एक ज़रूरी काम की तरह\nमिलता रहूंगा।\nइसे मैं अकेली आख़िरी इच्छा की तरह\nसबसे पहली इच्छा रखना चाहूंगा।", author: "Vinod kumar shukla" },
     { body: "Bhale betho hazaro vaar eno haath Jaline\nToh pan khabar nathi eni nas kya che", author: "Mariz" },
     { body: "'Gaalib' hame.n na chhe.D ki phir josh-e-ashk se\nbaiThe hai.n ham tahayya-e-tuufaa.n kiye hu.e", author: "Mirza Ghalib" },
     { body: "aur 'faraaz' chaahiye.n kitnii mohabbate.n tujhe\nmaa.o.n ne tere naam par bachcho.n kaa naam rakh diyaa", author: "Ahmad Faraz" },
@@ -317,11 +318,11 @@ const WALL_CSS = `
     background: var(--wall-bg);
     font-family: var(--font-work-sans), "Inter", system-ui, sans-serif;
     color: var(--wall-ink);
-    overflow-x: clip;
+    overflow-x: hidden;
   }
-  .wall-inner { max-width: 1320px; margin: 0 auto; padding: 24px 20px 40px; }
-  @media (min-width: 640px) { .wall-inner { padding: 28px 32px 56px; } }
-  @media (min-width: 1024px){ .wall-inner { padding: 30px 40px 64px; } }
+  .wall-inner { max-width: none; width: 100%; margin: 0; padding: 10px 4px 18px; }
+  @media (min-width: 640px) { .wall-inner { padding: 12px 8px 28px; } }
+  @media (min-width: 1024px){ .wall-inner { padding: 12px 12px 34px; } }
 
   .wserif { font-family: var(--font-instrument-serif), "EB Garamond", Georgia, serif; font-weight: 400; }
   .wmono  { font-family: var(--font-jetbrains-mono), ui-monospace, monospace; }
@@ -342,19 +343,24 @@ const WALL_CSS = `
   }
   @media (min-width: 1024px){ .hero-stage::before { background-size: 120px 120px; } }
 
-  /* Module grid */
+  /* Module grid — single column on mobile/tablet, 6-col editorial layout on desktop */
   .mgrid {
-    display: grid; grid-template-columns: 1fr; gap: 16px; align-items: stretch;
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; align-items: stretch;
   }
-  @media (min-width: 640px)  { .mgrid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
-  @media (min-width: 1024px) { .mgrid { grid-template-columns: repeat(6, 1fr); gap: 20px; } }
+  @media (min-width: 640px)  { .mgrid { gap: 6px; } }
+  @media (min-width: 1024px) {
+    .mgrid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .m-6 { grid-column: span 6; }
+    .m-4 { grid-column: span 4; }
+    .m-2 { grid-column: span 2; }
+  }
 
   .module {
     position: relative;
     background: var(--wall-card);
     border: 1px solid var(--wall-line);
     transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms, border-color 260ms;
-    cursor: pointer; min-height: 170px;
+    cursor: pointer; min-height: 132px; min-width: 0;
   }
   .module:hover {
     transform: translateY(-3px);
@@ -363,8 +369,8 @@ const WALL_CSS = `
   }
   .module.flat { cursor: default; }
   .module.flat:hover { transform: none; box-shadow: none; border-color: var(--wall-line); }
-  .card-inner { padding: 20px 22px; height: 100%; display: flex; flex-direction: column; gap: 14px; }
-  @media (min-width: 640px){ .card-inner { padding: 22px 26px; } }
+  .card-inner { padding: 10px 8px; height: 100%; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  @media (min-width: 640px){ .card-inner { padding: 12px 14px; } }
 
   .corner-mark { position: absolute; width: 8px; height: 8px; border: 1px solid var(--wall-ink); z-index: 2; }
   .corner-mark.tl { top: -4px; left: -4px; border-right: none; border-bottom: none; }
@@ -375,26 +381,38 @@ const WALL_CSS = `
   .idx-label { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: .18em; color: var(--wall-ink-soft); text-transform: uppercase; }
   .idx-num   { font-family: var(--font-jetbrains-mono), monospace; font-size: 10px; letter-spacing: .08em; color: var(--wall-accent); }
 
-  .head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-width: 0; }
+  .head-row > * { min-width: 0; }
+  .head-row .idx-label { text-align: right; overflow-wrap: anywhere; }
+  @media (max-width: 420px) {
+    .head-row { flex-direction: column; }
+    .head-row .idx-label { text-align: left; }
+  }
 
   /* GitHub graph squares */
-  .gh-scroll { width: 100%; overflow-x: auto; }
-  .gh-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); grid-auto-columns: 1fr; gap: 2px; width: 100%; }
+  .gh-scroll { width: 100%; max-width: 100%; overflow: hidden; }
+  .gh-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); grid-auto-columns: minmax(3px, 1fr); gap: 1px; width: 100%; }
   .gh-cell { width: 100%; aspect-ratio: 1; border-radius: 50%; }
+  @media (min-width: 520px) {
+    .gh-grid { grid-auto-columns: minmax(7px, 1fr); gap: 2px; }
+  }
+  @media (min-width: 900px) {
+    .gh-grid { grid-auto-columns: minmax(11px, 1fr); }
+  }
 
   /* Chips */
-  .chip { font-family: var(--font-jetbrains-mono), monospace; font-size: 11px; padding: 4px 10px; border: 1px solid var(--wall-line); letter-spacing: .03em; color: var(--wall-ink); white-space: nowrap; }
+  .chip { font-family: var(--font-jetbrains-mono), monospace; font-size: 11px; padding: 4px 10px; border: 1px solid var(--wall-line); letter-spacing: .03em; color: var(--wall-ink); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
   .chip-solid { background: var(--wall-accent); border-color: var(--wall-accent); color: #fff; }
 
   /* Modal */
   .wmodal-backdrop {
     position: fixed; inset: 0; background: rgba(20,25,35,0.62);
     backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
-    z-index: 1000; padding: 20px; animation: wfade .24s ease;
+    z-index: 1000; padding: 12px; animation: wfade .24s ease;
   }
   .wmodal {
-    background: var(--wall-card); max-width: 680px; width: 100%; max-height: 88vh;
-    overflow: auto; padding: 32px 24px; border: 1px solid var(--wall-ink);
+    background: var(--wall-card); max-width: 680px; width: 100%; max-height: calc(100dvh - 24px);
+    overflow: auto; padding: 44px 18px 24px; border: 1px solid var(--wall-ink);
     position: relative; animation: wrise .32s cubic-bezier(.2,.8,.2,1);
   }
   @media (min-width: 640px){ .wmodal { padding: 44px 48px; } }
@@ -406,6 +424,12 @@ const WALL_CSS = `
     padding: 4px 6px; letter-spacing: .1em;
   }
   .wmodal-close:hover { color: var(--wall-ink); }
+  .modal-split { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; min-width: 0; }
+  .modal-split-main { min-width: 0; overflow-wrap: anywhere; }
+  .modal-actions { display: flex; gap: 10px; flex-shrink: 0; color: var(--wall-ink-soft); }
+  @media (max-width: 520px) {
+    .modal-split { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
   @keyframes wfade { from { opacity: 0 } to { opacity: 1 } }
   @keyframes wrise { from { transform: translateY(12px); opacity: 0 } to { transform: none; opacity: 1 } }
 
@@ -1095,9 +1119,9 @@ function ProjectsModalBody() {
 
       {isProjects && projectsData[tab].map((p, i, arr) => (
         <div key={p.id} style={{ padding: '20px 0', borderBottom: i < arr.length - 1 ? `1px solid ${W.line}` : 'none' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, marginBottom: 8 }}>
-            <div className="wserif" style={{ fontSize: 26, lineHeight: 1.1 }}>{p.name}</div>
-            <div style={{ display: 'flex', gap: 10, flexShrink: 0, color: W.inkSoft }}>
+          <div className="modal-split" style={{ marginBottom: 8 }}>
+            <div className="wserif modal-split-main" style={{ fontSize: 26, lineHeight: 1.1 }}>{p.name}</div>
+            <div className="modal-actions">
               {p.githubUrl && <a href={p.githubUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit' }} aria-label={`${p.name} GitHub`} onMouseEnter={e => (e.currentTarget.style.color = W.ink)} onMouseLeave={e => (e.currentTarget.style.color = W.inkSoft)}><GithubIcon /></a>}
               {p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit' }} aria-label={`${p.name} live`} onMouseEnter={e => (e.currentTarget.style.color = W.ink)} onMouseLeave={e => (e.currentTarget.style.color = W.inkSoft)}><ExternalIcon /></a>}
             </div>
@@ -1119,8 +1143,8 @@ function ProjectsModalBody() {
 
       {tab === 'work' && workData.map((w, i) => (
         <div key={i} style={{ padding: '20px 0', borderBottom: i < workData.length - 1 ? `1px solid ${W.line}` : 'none' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12, marginBottom: 4 }}>
-            <div className="wserif" style={{ fontSize: 24, lineHeight: 1.15 }}>
+          <div className="modal-split" style={{ marginBottom: 4 }}>
+            <div className="wserif modal-split-main" style={{ fontSize: 24, lineHeight: 1.15 }}>
               {w.role} <span style={{ fontStyle: 'italic', color: W.inkSoft, fontSize: 18 }}>— {w.company}</span>
             </div>
             {w.url && <a href={w.url} target="_blank" rel="noreferrer" style={{ color: W.inkSoft, flexShrink: 0 }} aria-label={`${w.company} site`}><ExternalIcon /></a>}
@@ -1201,7 +1225,7 @@ function WallDesign() {
       <div className="wall-inner">
         {/* Hero stage */}
         <section className="hero-stage" ref={stageRef}
-          style={{ position: 'relative', marginBottom: 16 }}>
+          style={{ position: 'relative', marginBottom: 8 }}>
           {desktop && cursor.on && (
             <>
               <div className="wmono" style={{ position: 'absolute', left: cursor.x + 14, top: cursor.y + 10, fontSize: 10, color: W.inkSoft, pointerEvents: 'none', zIndex: 8, letterSpacing: '.08em' }}>
@@ -1214,7 +1238,7 @@ function WallDesign() {
 
           <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <div className="wserif" style={{ fontSize: 'clamp(36px, 7.5vw, 96px)', lineHeight: .95, letterSpacing: '-.03em', color: W.ink }}>
+              <div className="wserif" style={{ fontSize: 'clamp(24px, 7vw, 96px)', lineHeight: .98, letterSpacing: '-.03em', color: W.ink }}>
                 The Internet&apos;s not<br />
                 written in pencil, Mark.<br />
                 It&apos;s written in{' '}
@@ -1230,18 +1254,18 @@ function WallDesign() {
         </section>
 
         {/* Divider */}
-        <div style={{ height: 1, background: W.ink, marginBottom: 20 }} />
+        <div style={{ height: 1, background: W.ink, marginBottom: 6 }} />
 
         {/* ── MODULE GRID (6) ── */}
         <div className="mgrid">
 
           {/* 01 — GitHub graph */}
-          <Card span="sm:col-span-2 lg:col-span-6" flat>
+          <Card span="m-6" flat>
             <WallGitHubGraph username="divy97" />
           </Card>
 
           {/* 02 — Journal (daily writing) */}
-          <Card span="sm:col-span-2 lg:col-span-4" onClick={() => setOpen('journal')}>
+          <Card span="m-4" onClick={() => setOpen('journal')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="02 / journal" label="thoughts · poetry" />
               <div className="wserif" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.12 }}>
@@ -1254,7 +1278,7 @@ function WallDesign() {
           </Card>
 
           {/* 03 — Songs (live Spotify) */}
-          <Card span="sm:col-span-2 lg:col-span-2" onClick={() => setOpen('songs')}>
+          <Card span="m-2" onClick={() => setOpen('songs')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <div>
                 <ModHead num="03 / on repeat" label={`${trackCount} tracks`} />
@@ -1281,7 +1305,7 @@ function WallDesign() {
           </Card>
 
           {/* 04 — Work (projects + experience + stack) */}
-          <Card span="sm:col-span-2 lg:col-span-4" onClick={() => setOpen('projects')} deep>
+          <Card span="m-4" onClick={() => setOpen('projects')} deep>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="04 / work" label="projects · experience · stack" />
               <div className="wserif" style={{ fontSize: 'clamp(34px,5.5vw,52px)', lineHeight: .95, letterSpacing: '-.01em' }}>
@@ -1296,7 +1320,7 @@ function WallDesign() {
           </Card>
 
           {/* 05 — About */}
-          <Card span="sm:col-span-2 lg:col-span-2" onClick={() => setOpen('about')}>
+          <Card span="m-2" onClick={() => setOpen('about')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="05 / about" label="the person behind the index" />
               <div className="wserif" style={{ fontSize: 'clamp(22px,3vw,28px)', lineHeight: 1.25, color: W.ink }}>
@@ -1306,7 +1330,7 @@ function WallDesign() {
           </Card>
 
           {/* 06 — Write to me */}
-          <Card span="sm:col-span-2 lg:col-span-6" flat marks={false}>
+          <Card span="m-6" flat marks={false}>
             <div className="card-inner" style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <div className="idx-num" style={{ marginBottom: 10 }}>06 / write to me</div>
