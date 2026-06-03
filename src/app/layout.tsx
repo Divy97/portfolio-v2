@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playwrite_HU, Work_Sans } from "next/font/google";
+import { Playwrite_HU, Work_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const playwriteHU = Playwrite_HU({
@@ -14,8 +14,21 @@ const workSans = Work_Sans({
   style: ["normal", "italic"],
 });
 
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
 // Derive site URL from env, fallback to localhost for dev
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://divyparekh.me";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -88,7 +101,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playwriteHU.variable} ${workSans.variable} antialiased`}
+        className={`${playwriteHU.variable} ${workSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} antialiased`}
       >
         {/* JSON-LD Structured Data */}
         <script
