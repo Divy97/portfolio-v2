@@ -1,10 +1,12 @@
 'use client'
+import { data } from 'framer-motion/client';
 import { useState, useEffect, useRef } from 'react'
 
 // ─── CONTENT ────────────────────────────────────────────────────────────────
 
 const C = {
   thoughts: [
+    {date : "", text: "Shit happens :)"},
     { date: "", text: "Buy a chocolate" },
     { date: "", text: "Learning is not supposed to be fun. The primary feeling should be that of effort. It should look a lot less like that \"10 minute full body\" workout from your local digital media creator and a lot more like a serious session at the gym. You want the mental equivalent of sweating.\n\n— Andrej Karpathy" },
     { date: "", text: "In the AI age, taste will become even more important." },
@@ -100,7 +102,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 3,
       name: "Blah",
       description: "Real-time video calling platform with an AI chatbot you can @mention mid-call, built on Agora's Access Token and RTM SDK.",
-      githubUrl: "https://github.com/Divy097/blah-vc",
+      githubUrl: "https://github.com/Divy97/blah-vc",
       liveUrl: "",
       techStack: ["Node.js", "Express", "Agora RTM SDK", "EJS", "OpenAI API", "Docker"],
       keyFeatures: [
@@ -113,7 +115,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 4,
       name: "Razon",
       description: "Privacy-focused social platform with enhanced anonymity that lets users post images and text anonymously.",
-      githubUrl: "https://github.com/Divy097/razon",
+      githubUrl: "https://github.com/Divy97/razon",
       liveUrl: "",
       techStack: ["React", "WebSockets", "Express", "JWT", "Cloudinary", "Multer", "MongoDB", "AWS EC2"],
       keyFeatures: [
@@ -126,7 +128,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 5,
       name: "Sync",
       description: "Collaborative text editor with real-time editable documents inside dedicated rooms, and a resident AI that writes with you.",
-      githubUrl: "https://github.com/Divy097/sync",
+      githubUrl: "https://github.com/Divy97/sync",
       liveUrl: "",
       techStack: ["React", "WebSockets", "Express", "Redis", "Vertex AI", "MongoDB", "AWS EC2"],
       keyFeatures: [
@@ -155,7 +157,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 8,
       name: "ChatPDF",
       description: "Web app that lets users chat with PDF documents through natural-language conversations, powered by Gemini and LangChain.",
-      githubUrl: "https://github.com/Divy097/chatpdf",
+      githubUrl: "https://github.com/Divy97/chatpdf",
       liveUrl: "",
       techStack: ["Streamlit", "Google Generative AI", "Python", "Flask", "LangChain", "FAISS", "Docker", "PyPDF2"],
       keyFeatures: [
@@ -169,7 +171,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 9,
       name: "zenTab",
       description: "Minimalistic cross-browser extension that blocks distracting websites during focused work sessions with domain-based filtering.",
-      githubUrl: "https://github.com/Divy097/zentab",
+      githubUrl: "https://github.com/Divy97/zentab",
       liveUrl: "https://chromewebstore.google.com/detail/zentab/abdgfdocampilhegaakgafjgcmcdblfg",
       techStack: ["TypeScript", "HTML5", "CSS3", "Chrome Extension API", "WXT"],
       keyFeatures: [
@@ -183,7 +185,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 10,
       name: "CrowdFunding DApp",
       description: "Decentralized crowdfunding platform on Ethereum enabling transparent, trustless fundraising with smart-contract escrow.",
-      githubUrl: "https://github.com/Divy097/crowdFunding",
+      githubUrl: "https://github.com/Divy97/crowdFunding",
       liveUrl: "",
       techStack: ["React", "Solidity", "Ethereum", "Ethers.js", "ThirdWeb SDK", "JavaScript"],
       keyFeatures: [
@@ -197,7 +199,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       id: 11,
       name: "Sorting Visualizer",
       description: "Interactive web app that visualizes sorting algorithms in real-time, showing how each technique works step-by-step.",
-      githubUrl: "https://github.com/Divy097/React-sortingVisualizer",
+      githubUrl: "https://github.com/Divy97/React-sortingVisualizer",
       liveUrl: "https://www.youtube.com/watch?v=pxhmJybT6xU",
       techStack: ["React", "Redux", "Material-UI", "Jest"],
       keyFeatures: [
@@ -303,13 +305,13 @@ const W = {
 
 const WALL_CSS = `
   :root {
-    --wall-bg: #e8eaec;
-    --wall-bg-deep: #d5d9dd;
-    --wall-card: #f7f8f9;
-    --wall-ink: #15171a;
-    --wall-ink-soft: #5a6068;
-    --wall-line: #c7ccd1;
-    --wall-accent: oklch(0.62 0.18 28);
+    --wall-bg: #101113;
+    --wall-bg-deep: #090a0c;
+    --wall-card: #17181b;
+    --wall-ink: #e8e5de;
+    --wall-ink-soft: #8f939a;
+    --wall-line: #2d3035;
+    --wall-accent: oklch(0.70 0.19 28);
   }
   html, body { background: var(--wall-bg); }
 
@@ -359,7 +361,7 @@ const WALL_CSS = `
     position: relative;
     background: var(--wall-card);
     border: 1px solid var(--wall-line);
-    transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms, border-color 260ms;
+    transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms, border-color 260ms, background-color .4s ease, color .4s ease;
     cursor: pointer; min-height: 132px; min-width: 0;
   }
   .module:hover {
@@ -450,16 +452,123 @@ const WALL_CSS = `
     20%  { opacity: 1; }
     100% { opacity: 0; transform: translate(0, var(--dy, -40px)) rotate(var(--rot, 0)); }
   }
+  @keyframes pawfade { from { opacity: .55 } to { opacity: 0 } }
+
+  /* film grain over everything */
+  .wall::after {
+    content: ""; position: fixed; inset: -60%; pointer-events: none; z-index: 70;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: .07; animation: grain 9s steps(10) infinite;
+  }
+  @keyframes grain {
+    0%,100% { transform: translate(0,0) } 10% { transform: translate(-3%,2%) } 20% { transform: translate(2%,-4%) }
+    30% { transform: translate(-4%,-2%) } 40% { transform: translate(3%,4%) } 50% { transform: translate(-2%,3%) }
+    60% { transform: translate(4%,-1%) } 70% { transform: translate(-3%,-3%) } 80% { transform: translate(1%,4%) } 90% { transform: translate(4%,2%) }
+  }
+
+  /* staggered module entrance */
+  .module { animation: modin .7s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: var(--d, 0ms); }
+  @keyframes modin { from { opacity: 0; transform: translateY(18px) } }
+
+  /* cursor spotlight inside cards */
+  .module::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 1;
+    transition: opacity .35s ease;
+    background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--wall-accent) 12%, transparent), transparent 70%);
+  }
+  .module:hover::after { opacity: 1; }
+  .module.flat:hover::after { opacity: 0; }
+
+  /* hero line reveal + typewriter caret */
+  .hero-line { display: block; overflow: hidden; }
+  .hero-line > span { display: inline-block; animation: lineup .85s cubic-bezier(.2,.8,.2,1) backwards; }
+  @keyframes lineup { from { transform: translateY(108%); opacity: .2 } }
+  .tw-caret { display: inline-block; width: 3px; height: .95em; background: var(--wall-accent); vertical-align: -0.12em; margin-left: 3px; animation: caretblink 1.1s steps(1) infinite; }
+  @keyframes caretblink { 50% { opacity: 0 } }
+
+  /* status bar + colophon */
+  .statusbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 4px 2px 12px; flex-wrap: wrap;
+    font-family: var(--font-jetbrains-mono), monospace; font-size: 10px;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--wall-ink-soft);
+  }
+  .sb-group { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .sb-btn {
+    border: 1px solid var(--wall-line); background: none; color: inherit; font: inherit;
+    letter-spacing: .14em; text-transform: uppercase; padding: 4px 9px; cursor: pointer;
+    min-height: 0; min-width: 0; transition: border-color .2s, color .2s;
+  }
+  .sb-btn:hover { border-color: var(--wall-ink); color: var(--wall-ink); }
+  .sb-dot { width: 6px; height: 6px; border-radius: 50%; background: #34c97b; display: inline-block; animation: spotpulse 2.2s ease-in-out infinite; }
+  .sb-only-m { display: none; }
+  @media (max-width: 700px) { .sb-hide-m { display: none; } .sb-only-m { display: inline; } }
+
+  /* plain-text, clickable menu link — no button chrome */
+  .menu-link {
+    border: none; background: none; color: inherit; font: inherit;
+    letter-spacing: inherit; text-transform: inherit; padding: 0;
+    cursor: pointer; min-height: 0; min-width: 0;
+  }
+  .menu-link:hover { color: var(--wall-ink); }
+  .menu-link .ml-icon { color: var(--wall-accent); margin-right: 6px; }
+
+  .colophon {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    padding: 16px 2px 4px; font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--wall-ink-soft);
+  }
+  .barcode { display: flex; align-items: flex-end; gap: 2px; height: 18px; }
+  .barcode i { display: block; width: 2px; background: var(--wall-ink); opacity: .75; }
+
+  /* command palette */
+  .cmdk-backdrop {
+    position: fixed; inset: 0; z-index: 1200; background: rgba(12,14,16,.55);
+    backdrop-filter: blur(6px); display: flex; align-items: flex-start; justify-content: center;
+    padding: 14vh 14px 0; animation: wfade .18s ease;
+  }
+  .cmdk { width: 100%; max-width: 540px; background: var(--wall-card); border: 1px solid var(--wall-ink); animation: wrise .25s cubic-bezier(.2,.8,.2,1); }
+  .cmdk-input {
+    width: 100%; border: none; outline: none; background: transparent;
+    padding: 15px 18px; font-family: var(--font-jetbrains-mono), monospace; font-size: 13px;
+    color: var(--wall-ink); border-bottom: 1px solid var(--wall-line); letter-spacing: .04em;
+  }
+  .cmdk-list { max-height: 320px; overflow: auto; padding: 6px 0; }
+  .cmdk-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 10px 18px; cursor: pointer;
+    font-family: var(--font-jetbrains-mono), monospace; font-size: 12px; color: var(--wall-ink-soft);
+  }
+  .cmdk-item[data-active="true"] { background: color-mix(in oklab, var(--wall-accent) 9%, transparent); color: var(--wall-ink); }
+  .cmdk-hint { font-size: 10px; letter-spacing: .12em; opacity: .7; }
+
+  /* github cells pop in as a wave */
+  .gh-cell { animation: ghin .45s ease backwards; }
+  @keyframes ghin { from { opacity: 0; transform: scale(.2) } }
+
+  /* cursor miso — pops up at the pointer when you "meow" while scrolled down,
+     then trails along behind the cursor */
+  .cursor-miso {
+    position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none;
+    transform: translate(-200px, -200px); opacity: 0;
+    transition: transform .26s cubic-bezier(.2,.8,.3,1), opacity .3s ease;
+  }
+  .cursor-miso.show { opacity: 1; }
+  .cursor-miso.show svg { animation: misopop .4s cubic-bezier(.2,1.5,.4,1) backwards; }
+  @keyframes misopop { from { transform: scale(.3) translateY(10px) } }
+  .pocket-bubble {
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 4px;
+    background: var(--wall-card); color: var(--wall-ink); border: 1px solid var(--wall-ink);
+    font-family: var(--font-instrument-serif), serif; font-style: italic; font-size: 15px;
+    padding: 2px 11px; white-space: nowrap; border-radius: 13px; opacity: 0;
+  }
+  .cursor-miso.show .pocket-bubble { animation: misobubble .3s ease .12s forwards; }
 `
 
-function useWallStyles() {
-  useEffect(() => {
-    if (document.getElementById('wall-css')) return
-    const s = document.createElement('style')
-    s.id = 'wall-css'
-    s.textContent = WALL_CSS
-    document.head.appendChild(s)
-  }, [])
+// Rendered as a server-side <style> tag so the dark wall paints correctly
+// on first load with no flash.
+function WallStyles() {
+  return <style id="wall-css" dangerouslySetInnerHTML={{ __html: WALL_CSS }} />
 }
 
 // ─── HOOKS ────────────────────────────────────────────────────────────────────
@@ -474,6 +583,121 @@ function useIsDesktop() {
     return () => mq.removeEventListener('change', update)
   }, [])
   return desktop
+}
+
+// ─── SMALL DELIGHTS ──────────────────────────────────────────────────────────
+
+function Clock() {
+  const [now, setNow] = useState('--:--:--')
+  useEffect(() => {
+    const f = () => setNow(new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour12: false }))
+    f()
+    const id = setInterval(f, 1000)
+    return () => clearInterval(id)
+  }, [])
+  return <span suppressHydrationWarning>ahmedabad {now} ist</span>
+}
+
+const SCRAMBLE_CHARS = '!<>-_\\/[]{}—=+*^?#'
+
+// Decodes from glyph soup to the real text on hover.
+function ScrambleText({ text }: { text: string }) {
+  const [out, setOut] = useState(text)
+  const raf = useRef<number | null>(null)
+  useEffect(() => () => { if (raf.current) cancelAnimationFrame(raf.current) }, [])
+  const start = () => {
+    if (raf.current) cancelAnimationFrame(raf.current)
+    let frame = 0
+    const run = () => {
+      frame++
+      const reveal = Math.floor(frame / 2)
+      if (reveal >= text.length) { setOut(text); return }
+      setOut(text.split('').map((ch, i) =>
+        i < reveal || ch === ' ' ? ch : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]
+      ).join(''))
+      raf.current = requestAnimationFrame(run)
+    }
+    raf.current = requestAnimationFrame(run)
+  }
+  return <span onMouseEnter={start}>{out}</span>
+}
+
+const TAGLINES = [
+  'Not a portfolio, exactly.',
+  'A public diary with labeled drawers.',
+  'Software engineer · poetry hoarder · cat observer.',
+  'press ⌘k. or type "meow". your call.',
+]
+
+function Typewriter({ phrases }: { phrases: string[] }) {
+  const [text, setText] = useState('')
+  useEffect(() => {
+    let pi = 0, ci = 0, deleting = false, alive = true
+    let t: ReturnType<typeof setTimeout>
+    const tick = () => {
+      if (!alive) return
+      const p = phrases[pi]
+      if (!deleting) {
+        ci++
+        setText(p.slice(0, ci))
+        if (ci === p.length) { deleting = true; t = setTimeout(tick, 2600); return }
+        t = setTimeout(tick, 40 + Math.random() * 55)
+      } else {
+        ci--
+        setText(p.slice(0, ci))
+        if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; t = setTimeout(tick, 450); return }
+        t = setTimeout(tick, 22)
+      }
+    }
+    t = setTimeout(tick, 800)
+    return () => { alive = false; clearTimeout(t) }
+  }, [phrases])
+  return <>{text}<span className="tw-caret" /></>
+}
+
+// ─── COMMAND PALETTE (⌘K) ────────────────────────────────────────────────────
+
+interface CmdAction { id: string; label: string; hint: string; run: () => void }
+
+function CommandPalette({ open, onClose, actions }: { open: boolean; onClose: () => void; actions: CmdAction[] }) {
+  const [q, setQ] = useState('')
+  const [idx, setIdx] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (!open) return
+    setQ(''); setIdx(0)
+    const t = setTimeout(() => inputRef.current?.focus(), 20)
+    return () => clearTimeout(t)
+  }, [open])
+  useEffect(() => { setIdx(0) }, [q])
+  if (!open) return null
+  const filtered = actions.filter(a => a.label.toLowerCase().includes(q.toLowerCase()))
+  const exec = (a: CmdAction) => { onClose(); a.run() }
+  return (
+    <div className="cmdk-backdrop" onClick={onClose}>
+      <div className="cmdk" onClick={e => e.stopPropagation()}>
+        <input
+          ref={inputRef} className="cmdk-input" value={q} placeholder="type a command…"
+          onChange={e => setQ(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Escape') onClose()
+            else if (e.key === 'ArrowDown') { e.preventDefault(); setIdx(i => Math.min(i + 1, filtered.length - 1)) }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); setIdx(i => Math.max(i - 1, 0)) }
+            else if (e.key === 'Enter' && filtered[idx]) exec(filtered[idx])
+          }}
+        />
+        <div className="cmdk-list">
+          {filtered.map((a, i) => (
+            <div key={a.id} className="cmdk-item" data-active={i === idx}
+              onMouseEnter={() => setIdx(i)} onClick={() => exec(a)}>
+              <span>{a.label}</span><span className="cmdk-hint">{a.hint}</span>
+            </div>
+          ))}
+          {filtered.length === 0 && <div className="cmdk-item">nothing here. miso probably ate it.</div>}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 interface SpotifyTrack {
@@ -536,7 +760,23 @@ interface ContributionDay { color: string; contributionCount: number; date: stri
 function WallGitHubGraph({ username }: { username: string }) {
   const [weeks, setWeeks] = useState<ContributionDay[][]>([])
   const [total, setTotal] = useState(0)
+  const [shown, setShown] = useState(0)
   const [state, setState] = useState<'loading' | 'error' | 'ok'>('loading')
+
+  // Count the big number up from zero once data lands.
+  useEffect(() => {
+    if (state !== 'ok' || total === 0) return
+    let raf = 0
+    const t0 = performance.now()
+    const dur = 1400
+    const step = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur)
+      setShown(Math.round(total * (1 - Math.pow(1 - p, 3))))
+      if (p < 1) raf = requestAnimationFrame(step)
+    }
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
+  }, [state, total])
 
   useEffect(() => {
     let active = true
@@ -566,11 +806,11 @@ function WallGitHubGraph({ username }: { username: string }) {
     <div className="card-inner">
       <div className="head-row">
         <div className="idx-num">01 / github</div>
-        <div className="idx-label">last 12 months · the receipts</div>
+        <div className="idx-label"><ScrambleText text="last 12 months · the receipts" /></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap' }}>
         <div className="wserif" style={{ fontSize: 'clamp(34px, 5vw, 52px)', lineHeight: 1 }}>
-          {state === 'ok' ? total.toLocaleString() : '—'}
+          {state === 'ok' ? shown.toLocaleString() : '—'}
           <span style={{ fontStyle: 'italic', color: W.accent }}> contributions</span>
         </div>
         <a href={`https://github.com/${username}`} target="_blank" rel="noreferrer"
@@ -596,6 +836,7 @@ function WallGitHubGraph({ username }: { username: string }) {
                     background: day.contributionCount > 0 ? day.color : 'transparent',
                     border: `1px solid ${day.contributionCount > 0 ? 'transparent' : W.line}`,
                     gridRow: di + 1,
+                    animationDelay: `${wi * 12}ms`,
                   }}
                 />
               ))
@@ -621,6 +862,8 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
   const [blink, setBlink] = useState(false)
   const [bubble, setBubble] = useState<{ text: string; t: number } | null>(null)
   const [hearts, setHearts] = useState<{ id: number; dx: number; dy: number; rot: number }[]>([])
+  const [paws, setPaws] = useState<{ id: number; x: number; y: number; a: number }[]>([])
+  const lastPaw = useRef({ x: 900, y: 120 })
   const [breathe, setBreathe] = useState(0)
 
   const target   = useRef({ x: 900, y: 120 })
@@ -725,6 +968,17 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
         return { x: prev.x + (dx / d) * Math.min(speed, d), y: prev.y + (dy / d) * Math.min(speed, d) }
       })
 
+      // drop a fading paw print every few steps while moving
+      const pp = posRef.current
+      if ((next === 'wander' || next === 'watch' || next === 'play') &&
+          Math.hypot(pp.x - lastPaw.current.x, pp.y - lastPaw.current.y) > 46) {
+        const a = Math.atan2(pp.y - lastPaw.current.y, pp.x - lastPaw.current.x) * 180 / Math.PI
+        lastPaw.current = { x: pp.x, y: pp.y }
+        const id = now + Math.random()
+        setPaws(ps => [...ps.slice(-9), { id, x: pp.x, y: pp.y + 24, a }])
+        setTimeout(() => setPaws(ps => ps.filter(pw => pw.id !== id)), 2600)
+      }
+
       if (next !== m) setMood(next)
       raf.current = requestAnimationFrame(tick)
     }
@@ -750,8 +1004,7 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
     return () => clearTimeout(id)
   }, [bubble])
 
-  const onPet = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const celebrate = () => {
     setMood('love')
     const msgs = ["<3","purr!","*melts*","mrrp!","!!!","*chirp*"]
     setBubble({ text: msgs[Math.floor(Math.random() * msgs.length)], t: Date.now() })
@@ -762,7 +1015,21 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
     setTimeout(() => setHearts(h => h.filter(x => !burst.find(b => b.id === x.id))), 1400)
     setTimeout(() => setMood('wander'), 2200)
   }
+  const onPet = (e: React.MouseEvent) => { e.stopPropagation(); celebrate() }
 
+  // Anyone (palette, "meow" easter egg) can ask for affection via this event.
+  const celebrateRef = useRef(celebrate)
+  celebrateRef.current = celebrate
+  useEffect(() => {
+    const h = () => celebrateRef.current()
+    window.addEventListener('miso-love', h)
+    return () => window.removeEventListener('miso-love', h)
+  }, [])
+
+  // Miso wears cream fur so she stays visible against the dark wall.
+  const fur   = '#ece5d8'
+  const feat  = '#262019'
+  const pupil = '#ece5d8'
   const sleeping = mood === 'sleep', watching = mood === 'watch' || mood === 'play'
   const loafing  = mood === 'loaf',  loved = mood === 'love', playing = mood === 'play'
   const bScale   = 1 + Math.sin(breathe / 12) * 0.03
@@ -771,6 +1038,20 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
   const eyeDy = watching ? (cursor.current.y - pos.y > 0 ? 0.6 : -0.6) : 0
 
   return (
+    <>
+    {paws.map(p => (
+      <div key={p.id} style={{
+        position: 'absolute', left: p.x, top: p.y, zIndex: 4, pointerEvents: 'none',
+        transform: `translate(-6px,-6px) rotate(${p.a + 90}deg)`, animation: 'pawfade 2.6s ease-out forwards',
+      }}>
+        <svg width="12" height="12" viewBox="0 0 12 12">
+          <ellipse cx="6" cy="8" rx="3" ry="2.4" fill={fur} />
+          <circle cx="2.6" cy="4.4" r="1.1" fill={fur} />
+          <circle cx="6" cy="3.6" r="1.1" fill={fur} />
+          <circle cx="9.4" cy="4.4" r="1.1" fill={fur} />
+        </svg>
+      </div>
+    ))}
     <div onClick={onPet}
       style={{
         position: 'absolute', left: pos.x, top: pos.y, width: 100, height: 80, zIndex: 6,
@@ -782,42 +1063,42 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
       <svg viewBox="0 0 100 80" width="100" height="80" style={{ overflow: 'visible' }}>
         <defs>
           <radialGradient id="miso-belly" cx="50%" cy="60%" r="50%">
-            <stop offset="0%" stopColor="#fbeadf" /><stop offset="100%" stopColor="#f2d2bf" />
+            <stop offset="0%" stopColor="#d9c8b2" /><stop offset="100%" stopColor="#c2ab90" />
           </radialGradient>
         </defs>
         {!loafing && !sleeping && (
           <path d={`M 76 ${loved ? 48 : 50} Q ${88 + tailSwing * 6} ${38 + tailSwing * 4} ${80 + tailSwing * 3} ${26 + tailSwing * 3}`}
-            stroke="#2a2520" strokeWidth="7" fill="none" strokeLinecap="round" />
+            stroke={fur} strokeWidth="7" fill="none" strokeLinecap="round" />
         )}
         <g transform={`translate(50 ${loafing ? 50 : sleeping ? 52 : 48}) scale(${sleeping ? bScale : 1})`}>
-          {loafing ? <ellipse cx="0" cy="0" rx="30" ry="16" fill="#2a2520" />
-            : sleeping ? <ellipse cx="0" cy="0" rx="30" ry="18" fill="#2a2520" />
-            : <ellipse cx="0" cy="0" rx="26" ry="18" fill="#2a2520" />}
+          {loafing ? <ellipse cx="0" cy="0" rx="30" ry="16" fill={fur} />
+            : sleeping ? <ellipse cx="0" cy="0" rx="30" ry="18" fill={fur} />
+            : <ellipse cx="0" cy="0" rx="26" ry="18" fill={fur} />}
           {!sleeping && !loafing && <ellipse cx="0" cy="4" rx="14" ry="10" fill="url(#miso-belly)" opacity="0.95" />}
           {sleeping && <ellipse cx="0" cy="2" rx="18" ry="10" fill="url(#miso-belly)" opacity="0.9" />}
         </g>
         {!sleeping && !loafing && !loved && (
           <g>
-            <ellipse cx="34" cy="62" rx="5" ry="3.5" fill="#2a2520" /><ellipse cx="46" cy="63" rx="5" ry="3.5" fill="#2a2520" />
-            <ellipse cx="56" cy="63" rx="5" ry="3.5" fill="#2a2520" /><ellipse cx="68" cy="62" rx="5" ry="3.5" fill="#2a2520" />
+            <ellipse cx="34" cy="62" rx="5" ry="3.5" fill={fur} /><ellipse cx="46" cy="63" rx="5" ry="3.5" fill={fur} />
+            <ellipse cx="56" cy="63" rx="5" ry="3.5" fill={fur} /><ellipse cx="68" cy="62" rx="5" ry="3.5" fill={fur} />
             <circle cx="34" cy="64" r="1.3" fill="#f4a8b8" /><circle cx="46" cy="65" r="1.3" fill="#f4a8b8" />
             <circle cx="56" cy="65" r="1.3" fill="#f4a8b8" /><circle cx="68" cy="64" r="1.3" fill="#f4a8b8" />
           </g>
         )}
         {loafing && (
           <g>
-            <ellipse cx="32" cy="64" rx="4" ry="2.5" fill="#2a2520" /><ellipse cx="68" cy="64" rx="4" ry="2.5" fill="#2a2520" />
+            <ellipse cx="32" cy="64" rx="4" ry="2.5" fill={fur} /><ellipse cx="68" cy="64" rx="4" ry="2.5" fill={fur} />
             <circle cx="32" cy="65" r="1" fill="#f4a8b8" /><circle cx="68" cy="65" r="1" fill="#f4a8b8" />
           </g>
         )}
         <g transform={`translate(${sleeping ? 36 : loafing ? 50 : 32}, ${sleeping ? 46 : loafing ? 38 : 28})`}>
-          <path d={`M -2 8 L -6 ${playing ? -8 : -4} L 8 6 Z`} fill="#2a2520" />
-          <path d={`M 22 8 L 26 ${playing ? -8 : -4} L 12 6 Z`} fill="#2a2520" />
+          <path d={`M -2 8 L -6 ${playing ? -8 : -4} L 8 6 Z`} fill={fur} />
+          <path d={`M 22 8 L 26 ${playing ? -8 : -4} L 12 6 Z`} fill={fur} />
           <path d="M -1 7 L -3 1 L 5 5 Z" fill="#f4a8b8" opacity="0.85" />
           <path d="M 21 7 L 23 1 L 15 5 Z" fill="#f4a8b8" opacity="0.85" />
-          <circle cx="10" cy="12" r="14" fill="#2a2520" />
-          <circle cx="-1" cy="15" r="4.5" fill="#2a2520" /><circle cx="21" cy="15" r="4.5" fill="#2a2520" />
-          <ellipse cx="10" cy="20" rx="5" ry="2.5" fill="#fbeadf" opacity="0.85" />
+          <circle cx="10" cy="12" r="14" fill={fur} />
+          <circle cx="-1" cy="15" r="4.5" fill={fur} /><circle cx="21" cy="15" r="4.5" fill={fur} />
+          <ellipse cx="10" cy="20" rx="5" ry="2.5" fill={feat} opacity="0.85" />
           {loved ? (
             <>
               <path d="M 4 12 C 4 10, 6 9, 7 11 C 8 9, 10 10, 10 12 C 10 14, 7 15, 7 15 C 7 15, 4 14, 4 12 Z" fill="#ff6b8a" />
@@ -825,19 +1106,19 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
             </>
           ) : sleeping || loafing ? (
             <>
-              <path d="M 4 11.5 Q 6.5 13.5 9 11.5" stroke="#fbeadf" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-              <path d="M 11 11.5 Q 13.5 13.5 16 11.5" stroke="#fbeadf" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              <path d="M 4 11.5 Q 6.5 13.5 9 11.5" stroke={feat} strokeWidth="1.4" fill="none" strokeLinecap="round" />
+              <path d="M 11 11.5 Q 13.5 13.5 16 11.5" stroke={feat} strokeWidth="1.4" fill="none" strokeLinecap="round" />
             </>
           ) : blink ? (
             <>
-              <line x1="3.5" y1="12" x2="8.5" y2="12" stroke="#fbeadf" strokeWidth="1.4" strokeLinecap="round" />
-              <line x1="11.5" y1="12" x2="16.5" y2="12" stroke="#fbeadf" strokeWidth="1.4" strokeLinecap="round" />
+              <line x1="3.5" y1="12" x2="8.5" y2="12" stroke={feat} strokeWidth="1.4" strokeLinecap="round" />
+              <line x1="11.5" y1="12" x2="16.5" y2="12" stroke={feat} strokeWidth="1.4" strokeLinecap="round" />
             </>
           ) : (
             <>
-              <ellipse cx="6.5" cy="12" rx="2.4" ry="2.8" fill="#fbeadf" /><ellipse cx="13.5" cy="12" rx="2.4" ry="2.8" fill="#fbeadf" />
-              <ellipse cx={6.5 + eyeDx} cy={12 + eyeDy} rx="1.2" ry="1.6" fill="#1a1610" />
-              <ellipse cx={13.5 + eyeDx} cy={12 + eyeDy} rx="1.2" ry="1.6" fill="#1a1610" />
+              <ellipse cx="6.5" cy="12" rx="2.4" ry="2.8" fill={feat} /><ellipse cx="13.5" cy="12" rx="2.4" ry="2.8" fill={feat} />
+              <ellipse cx={6.5 + eyeDx} cy={12 + eyeDy} rx="1.2" ry="1.6" fill={pupil} />
+              <ellipse cx={13.5 + eyeDx} cy={12 + eyeDy} rx="1.2" ry="1.6" fill={pupil} />
               <circle cx={6 + eyeDx} cy={11 + eyeDy} r="0.5" fill="#fff" /><circle cx={13 + eyeDx} cy={11 + eyeDy} r="0.5" fill="#fff" />
             </>
           )}
@@ -849,23 +1130,23 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
           )}
           <path d="M 9 16 L 11 16 L 10 17.6 Z" fill="#f4a8b8" />
           {loved || playing ? (
-            <path d="M 8 18 Q 10 20 12 18" stroke="#fbeadf" strokeWidth="1" fill="none" strokeLinecap="round" />
+            <path d="M 8 18 Q 10 20 12 18" stroke={feat} strokeWidth="1" fill="none" strokeLinecap="round" />
           ) : (
             <>
-              <path d="M 10 17.6 Q 9 19 7.5 18.6" stroke="#fbeadf" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-              <path d="M 10 17.6 Q 11 19 12.5 18.6" stroke="#fbeadf" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+              <path d="M 10 17.6 Q 9 19 7.5 18.6" stroke={feat} strokeWidth="0.8" fill="none" strokeLinecap="round" />
+              <path d="M 10 17.6 Q 11 19 12.5 18.6" stroke={feat} strokeWidth="0.8" fill="none" strokeLinecap="round" />
             </>
           )}
-          <line x1="-4" y1="17" x2="2" y2="17.5" stroke="#fbeadf" strokeWidth="0.5" opacity="0.7" />
-          <line x1="-4" y1="15" x2="2" y2="16" stroke="#fbeadf" strokeWidth="0.5" opacity="0.5" />
-          <line x1="18" y1="17.5" x2="24" y2="17" stroke="#fbeadf" strokeWidth="0.5" opacity="0.7" />
-          <line x1="18" y1="16" x2="24" y2="15" stroke="#fbeadf" strokeWidth="0.5" opacity="0.5" />
+          <line x1="-4" y1="17" x2="2" y2="17.5" stroke={feat} strokeWidth="0.5" opacity="0.7" />
+          <line x1="-4" y1="15" x2="2" y2="16" stroke={feat} strokeWidth="0.5" opacity="0.5" />
+          <line x1="18" y1="17.5" x2="24" y2="17" stroke={feat} strokeWidth="0.5" opacity="0.7" />
+          <line x1="18" y1="16" x2="24" y2="15" stroke={feat} strokeWidth="0.5" opacity="0.5" />
         </g>
         {sleeping && (
           <g transform="translate(72 24)">
-            <text fontFamily="serif" fontSize="16" fill="#2a2520" fontStyle="italic" opacity="0.8">z</text>
-            <text x="8" y="-6" fontFamily="serif" fontSize="12" fill="#2a2520" fontStyle="italic" opacity="0.55">z</text>
-            <text x="14" y="-12" fontFamily="serif" fontSize="9" fill="#2a2520" fontStyle="italic" opacity="0.35">z</text>
+            <text fontFamily="serif" fontSize="16" fill={fur} fontStyle="italic" opacity="0.8">z</text>
+            <text x="8" y="-6" fontFamily="serif" fontSize="12" fill={fur} fontStyle="italic" opacity="0.55">z</text>
+            <text x="14" y="-12" fontFamily="serif" fontSize="9" fill={fur} fontStyle="italic" opacity="0.35">z</text>
           </g>
         )}
         {loved && (
@@ -901,6 +1182,96 @@ function MisoCat({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null
         </div>
       )}
     </div>
+    </>
+  )
+}
+
+// ─── CURSOR MISO ──────────────────────────────────────────────────────────────
+// When you "meow" (or pet via ⌘K) while the hero is scrolled out of view, a
+// little Miso pops up at the pointer and trails along behind it, so you always
+// see the reaction wherever you happen to be reading.
+
+function CursorMiso({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | null> }) {
+  const [show, setShow] = useState(false)
+  const [line, setLine] = useState('purr')
+  const [hearts, setHearts] = useState<{ id: number; dx: number; dy: number; rot: number }[]>([])
+  const boxRef = useRef<HTMLDivElement>(null)
+  const cur = useRef({ x: -200, y: -200 })
+  const hideT = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Track the pointer and keep the cat parked just above-right of it.
+  useEffect(() => {
+    const place = () => {
+      if (boxRef.current) boxRef.current.style.transform = `translate(${cur.current.x + 12}px, ${cur.current.y - 104}px)`
+    }
+    const mv = (e: MouseEvent) => { cur.current = { x: e.clientX, y: e.clientY }; place() }
+    window.addEventListener('mousemove', mv)
+    return () => window.removeEventListener('mousemove', mv)
+  }, [])
+
+  useEffect(() => {
+    const onLove = () => {
+      // If the real Miso is on screen she already shows the love — stay hidden.
+      const r = stageRef.current?.getBoundingClientRect()
+      if (r && r.bottom > 90) return
+
+      const lines = ['purr purr', 'mrrp!', '<3', 'best day ever', '*melts*', 'i heard that']
+      setLine(lines[Math.floor(Math.random() * lines.length)])
+      setShow(true)
+
+      const burst = Array.from({ length: 6 }, (_, i) => ({
+        id: Date.now() + i, dx: (Math.random() - 0.5) * 70, dy: -36 - Math.random() * 44, rot: (Math.random() - 0.5) * 55,
+      }))
+      setHearts(h => [...h, ...burst])
+      setTimeout(() => setHearts(h => h.filter(x => !burst.find(b => b.id === x.id))), 1600)
+
+      if (hideT.current) clearTimeout(hideT.current)
+      hideT.current = setTimeout(() => setShow(false), 2800)
+    }
+    window.addEventListener('miso-love', onLove)
+    return () => { window.removeEventListener('miso-love', onLove); if (hideT.current) clearTimeout(hideT.current) }
+  }, [stageRef])
+
+  return (
+    <div ref={boxRef} className={`cursor-miso ${show ? 'show' : ''}`} aria-hidden>
+      <div className="pocket-bubble">{line}</div>
+      {hearts.map(h => (
+        <div key={h.id} style={{
+          position: 'absolute', left: 45 + h.dx, top: 8, pointerEvents: 'none',
+          animation: 'misoheart 1.5s ease-out forwards', ['--dy' as string]: `${h.dy}px`, ['--rot' as string]: `${h.rot}deg`,
+        }}>
+          <svg width="20" height="18" viewBox="0 0 20 18">
+            <path d="M 10 16 C 2 10, 2 4, 6 3 C 8 2.5, 10 4, 10 6 C 10 4, 12 2.5, 14 3 C 18 4, 18 10, 10 16 Z" fill="#ff6b8a" />
+          </svg>
+        </div>
+      ))}
+      <svg width="92" height="96" viewBox="0 0 92 96" style={{ filter: 'drop-shadow(0 6px 12px rgba(0,0,0,.4))' }}>
+        {/* ears */}
+        <path d="M 22 40 L 16 14 L 40 30 Z" fill="#ece5d8" />
+        <path d="M 70 40 L 76 14 L 52 30 Z" fill="#ece5d8" />
+        <path d="M 23 35 L 20 21 L 33 30 Z" fill="#f4a8b8" opacity="0.8" />
+        <path d="M 69 35 L 72 21 L 59 30 Z" fill="#f4a8b8" opacity="0.8" />
+        {/* head */}
+        <ellipse cx="46" cy="56" rx="32" ry="28" fill="#ece5d8" />
+        {/* heart eyes */}
+        <path d="M 32 50 C 32 46, 36 44, 38 48 C 40 44, 44 46, 44 50 C 44 54, 38 58, 38 58 C 38 58, 32 54, 32 50 Z" fill="#ff6b8a" />
+        <path d="M 48 50 C 48 46, 52 44, 54 48 C 56 44, 60 46, 60 50 C 60 54, 54 58, 54 58 C 54 58, 48 54, 48 50 Z" fill="#ff6b8a" />
+        {/* blush */}
+        <ellipse cx="28" cy="60" rx="5" ry="3" fill="#f4a8b8" opacity="0.55" />
+        <ellipse cx="64" cy="60" rx="5" ry="3" fill="#f4a8b8" opacity="0.55" />
+        {/* nose + happy mouth */}
+        <path d="M 44 60 L 48 60 L 46 63 Z" fill="#f4a8b8" />
+        <path d="M 42 64 Q 46 68 50 64" stroke="#262019" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+        {/* whiskers */}
+        <line x1="10" y1="58" x2="26" y2="60" stroke="#262019" strokeWidth="1" opacity="0.6" />
+        <line x1="10" y1="64" x2="26" y2="64" stroke="#262019" strokeWidth="1" opacity="0.5" />
+        <line x1="66" y1="60" x2="82" y2="58" stroke="#262019" strokeWidth="1" opacity="0.6" />
+        <line x1="66" y1="64" x2="82" y2="64" stroke="#262019" strokeWidth="1" opacity="0.5" />
+        {/* paws */}
+        <ellipse cx="32" cy="86" rx="9" ry="7" fill="#ece5d8" />
+        <ellipse cx="60" cy="86" rx="9" ry="7" fill="#ece5d8" />
+      </svg>
+    </div>
   )
 }
 
@@ -929,15 +1300,15 @@ function WModal({ open, onClose, children, wide }: {
 
 // ─── CARD (grid module) ─────────────────────────────────────────────────────
 
-function Card({ span = '', onClick, children, dark, deep, flat, marks = true }: {
+function Card({ span = '', onClick, children, dark, deep, flat, marks = true, delay = 0, openLabel }: {
   span?: string; onClick?: () => void; children: React.ReactNode
-  dark?: boolean; deep?: boolean; flat?: boolean; marks?: boolean
+  dark?: boolean; deep?: boolean; flat?: boolean; marks?: boolean; delay?: number; openLabel?: string
 }) {
-  const style: React.CSSProperties = {}
+  const style: React.CSSProperties = { ['--d' as string]: `${delay}ms` }
   if (dark) { style.background = W.ink; style.borderColor = W.ink; style.color = '#e8eaec' }
   else if (deep) { style.background = W.bgDeep }
   return (
-    <div className={`module ${flat ? 'flat' : ''} ${span}`} onClick={onClick} style={style}>
+    <div className={`module ${flat ? 'flat' : ''} ${span}`} onClick={onClick} style={style} data-open-label={openLabel}>
       {marks && (<><span className="corner-mark tl" /><span className="corner-mark tr" /><span className="corner-mark bl" /><span className="corner-mark br" /></>)}
       {children}
     </div>
@@ -948,7 +1319,7 @@ function ModHead({ num, label, light }: { num: string; label: string; light?: bo
   return (
     <div className="head-row">
       <div className="idx-num" style={light ? { color: W.accent } : undefined}>{num}</div>
-      <div className="idx-label" style={light ? { color: 'rgba(232,234,236,.6)' } : undefined}>{label}</div>
+      <div className="idx-label" style={light ? { color: 'rgba(232,234,236,.6)' } : undefined}><ScrambleText text={label} /></div>
     </div>
   )
 }
@@ -1171,13 +1542,16 @@ function ProjectsModalBody() {
 // ─── WALL ──────────────────────────────────────────────────────────────────
 
 function WallDesign() {
-  useWallStyles()
   const [phase, setPhase] = useState<'loading' | 'ready'>('loading')
   const desktop = useIsDesktop()
   const spotify = useSpotify()
   const [open, setOpen] = useState<string | null>(null)
-  const [cursor, setCursor] = useState({ x: 0, y: 0, on: false })
+  const [palette, setPalette] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const vLineRef = useRef<HTMLDivElement>(null)
+  const hLineRef = useRef<HTMLDivElement>(null)
+  const tagRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('ready'), 1500)
@@ -1194,58 +1568,119 @@ function WallDesign() {
   const eqAnimate = isPlaying || !spotify?.configured
   const trackCount = spotify?.top?.length || C.songs.length
 
+  // Surveying crosshair across the whole wall — direct DOM writes, zero re-renders.
   useEffect(() => {
-    if (!desktop) { setCursor(c => ({ ...c, on: false })); return }
-    const el = stageRef.current
-    if (!el) return
+    if (!desktop) return
     const mv = (e: MouseEvent) => {
-      const r = el.getBoundingClientRect()
-      setCursor({ x: e.clientX - r.left, y: e.clientY - r.top, on: true })
+      if (vLineRef.current) vLineRef.current.style.transform = `translateX(${e.clientX}px)`
+      if (hLineRef.current) hLineRef.current.style.transform = `translateY(${e.clientY}px)`
+      const tag = tagRef.current
+      if (tag) {
+        tag.style.transform = `translate(${e.clientX + 14}px, ${e.clientY + 14}px)`
+        const mod = (e.target as HTMLElement).closest?.('[data-open-label]') as HTMLElement | null
+        tag.textContent = mod
+          ? `open · ${mod.dataset.openLabel} ↵`
+          : `[${String(Math.round(e.clientX)).padStart(4, '0')} · ${String(Math.round(e.clientY)).padStart(4, '0')}]`
+        tag.style.color = mod ? 'var(--wall-accent)' : 'var(--wall-ink-soft)'
+      }
     }
-    const lv = () => setCursor(c => ({ ...c, on: false }))
-    el.addEventListener('mousemove', mv)
-    el.addEventListener('mouseleave', lv)
-    return () => { el.removeEventListener('mousemove', mv); el.removeEventListener('mouseleave', lv) }
+    window.addEventListener('mousemove', mv)
+    return () => window.removeEventListener('mousemove', mv)
   }, [desktop])
+
+  // Spotlight gradient tracks the cursor inside whichever module it's over.
+  useEffect(() => {
+    if (!desktop || phase !== 'ready') return
+    const grid = gridRef.current
+    if (!grid) return
+    const mv = (e: MouseEvent) => {
+      const mod = (e.target as HTMLElement).closest('.module') as HTMLElement | null
+      if (!mod) return
+      const r = mod.getBoundingClientRect()
+      mod.style.setProperty('--mx', `${e.clientX - r.left}px`)
+      mod.style.setProperty('--my', `${e.clientY - r.top}px`)
+    }
+    grid.addEventListener('mousemove', mv)
+    return () => grid.removeEventListener('mousemove', mv)
+  }, [desktop, phase])
+
+  // ⌘K palette + the "meow" easter egg.
+  useEffect(() => {
+    let buf = ''
+    const h = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette(p => !p); return }
+      if (e.key.length === 1) {
+        buf = (buf + e.key.toLowerCase()).slice(-4)
+        if (buf === 'meow') window.dispatchEvent(new Event('miso-love'))
+      }
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [])
+
+  useEffect(() => {
+    console.log(
+      '%c /\\_/\\\n( o.o )  curiosity logged.\n > ^ <   type "meow" anywhere on the page — miso will hear you.',
+      'font-family: monospace; font-size: 13px; color: #c2410c;'
+    )
+  }, [])
 
   const ticker = C.thoughts.slice(0, 5).map(t => t.date ? `${t.date} — ${t.text}` : t.text).join('   ·   ')
   const eqHeights = [0.6, 0.9, 0.4, 1, 0.7, 0.5, 0.85, 0.35, 0.75, 0.6]
   const eqCss = eqHeights.map((v, i) => `@keyframes eq${i}{from{height:${v * 30}%}to{height:${v * 100}%}}`).join('')
 
+  const actions: CmdAction[] = [
+    { id: 'journal', label: 'open · journal — thoughts & poetry',  hint: '02', run: () => setOpen('journal') },
+    { id: 'songs',   label: 'open · on repeat — live spotify',     hint: '03', run: () => setOpen('songs') },
+    { id: 'work',    label: 'open · work — projects & experience', hint: '04', run: () => setOpen('projects') },
+    { id: 'about',   label: 'open · about divy',                   hint: '05', run: () => setOpen('about') },
+    { id: 'miso',    label: 'pet · miso the cat',                  hint: '=^.^=', run: () => window.dispatchEvent(new Event('miso-love')) },
+    { id: 'email',   label: 'write · email me',                    hint: '06', run: () => { window.location.href = 'mailto:divyparekh1810@gmail.com' } },
+    { id: 'github',  label: 'visit · github',                      hint: '↗', run: () => window.open('https://github.com/Divy097', '_blank') },
+    { id: 'resume',  label: 'read · resume',                       hint: '↗', run: () => window.open('https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view', '_blank') },
+  ]
+
   if (phase === 'loading') return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#e8eaec' }}>
+    <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--wall-bg, #101113)' }}>
+      <WallStyles />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/cat.gif" alt="loading" width={220} height={220} style={{ mixBlendMode: 'multiply' }} />
+      <img src="/cat.gif" alt="loading" width={220} height={220}
+        style={{ mixBlendMode: 'screen', filter: 'invert(1)' }} />
     </div>
   )
 
   return (
     <div className="wall">
+      <WallStyles />
       <style>{eqCss}</style>
       <div className="wall-inner">
+        {/* Status bar */}
+        <header className="statusbar">
+          <div className="sb-group">
+            <span style={{ color: 'var(--wall-ink)' }}><ScrambleText text="divy parekh" /></span>
+            <span className="sb-hide-m">— wall index v2.0</span>
+          </div>
+          <div className="sb-group">
+            <span className="sb-hide-m" style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+              <span className="sb-dot" /> open to conversations
+            </span>
+            <span className="sb-hide-m"><Clock /></span>
+            <button className="sb-btn sb-hide-m" onClick={() => setPalette(true)} aria-label="open command palette">⌘k</button>
+          </div>
+        </header>
+
         {/* Hero stage */}
         <section className="hero-stage" ref={stageRef}
           style={{ position: 'relative', marginBottom: 8 }}>
-          {desktop && cursor.on && (
-            <>
-              <div className="wmono" style={{ position: 'absolute', left: cursor.x + 14, top: cursor.y + 10, fontSize: 10, color: W.inkSoft, pointerEvents: 'none', zIndex: 8, letterSpacing: '.08em' }}>
-                [{String(Math.round(cursor.x)).padStart(4, '0')} · {String(Math.round(cursor.y)).padStart(4, '0')}]
-              </div>
-              <div style={{ position: 'absolute', left: 0, right: 0, top: cursor.y, height: 1, background: W.line, opacity: .4, pointerEvents: 'none', zIndex: 7 }} />
-              <div style={{ position: 'absolute', top: 0, bottom: 0, left: cursor.x, width: 1, background: W.line, opacity: .4, pointerEvents: 'none', zIndex: 7 }} />
-            </>
-          )}
-
           <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <div className="wserif" style={{ fontSize: 'clamp(24px, 7vw, 96px)', lineHeight: .98, letterSpacing: '-.03em', color: W.ink }}>
-                The Internet&apos;s not<br />
-                written in pencil, Mark.<br />
-                It&apos;s written in{' '}
-                <span style={{ fontStyle: 'italic', color: W.accent }}>ink</span>.
+                <span className="hero-line"><span style={{ animationDelay: '.05s' }}>The Internet&apos;s not</span></span>
+                <span className="hero-line"><span style={{ animationDelay: '.16s' }}>written in pencil, Mark.</span></span>
+                <span className="hero-line"><span style={{ animationDelay: '.27s' }}>It&apos;s written in <span style={{ fontStyle: 'italic', color: W.accent }}>ink</span>.</span></span>
               </div>
-              <div className="wserif" style={{ fontSize: 'clamp(14px, 1.8vw, 20px)', color: W.inkSoft, marginTop: 16, fontStyle: 'italic' }}>
-                Not a portfolio, exactly.
+              <div className="wserif" style={{ fontSize: 'clamp(14px, 1.8vw, 20px)', color: W.inkSoft, marginTop: 16, fontStyle: 'italic', minHeight: '1.6em' }}>
+                <Typewriter phrases={TAGLINES} />
               </div>
             </div>
           </div>
@@ -1257,7 +1692,7 @@ function WallDesign() {
         <div style={{ height: 1, background: W.ink, marginBottom: 6 }} />
 
         {/* ── MODULE GRID (6) ── */}
-        <div className="mgrid">
+        <div className="mgrid" ref={gridRef}>
 
           {/* 01 — GitHub graph */}
           <Card span="m-6" flat>
@@ -1265,7 +1700,7 @@ function WallDesign() {
           </Card>
 
           {/* 02 — Journal (daily writing) */}
-          <Card span="m-4" onClick={() => setOpen('journal')}>
+          <Card span="m-4" delay={90} openLabel="journal" onClick={() => setOpen('journal')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="02 / journal" label="thoughts · poetry" />
               <div className="wserif" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.12 }}>
@@ -1278,7 +1713,7 @@ function WallDesign() {
           </Card>
 
           {/* 03 — Songs (live Spotify) */}
-          <Card span="m-2" onClick={() => setOpen('songs')}>
+          <Card span="m-2" delay={180} openLabel="on repeat" onClick={() => setOpen('songs')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <div>
                 <ModHead num="03 / on repeat" label={`${trackCount} tracks`} />
@@ -1305,7 +1740,7 @@ function WallDesign() {
           </Card>
 
           {/* 04 — Work (projects + experience + stack) */}
-          <Card span="m-4" onClick={() => setOpen('projects')} deep>
+          <Card span="m-4" delay={270} openLabel="work index" onClick={() => setOpen('projects')} deep>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="04 / work" label="projects · experience · stack" />
               <div className="wserif" style={{ fontSize: 'clamp(34px,5.5vw,52px)', lineHeight: .95, letterSpacing: '-.01em' }}>
@@ -1320,17 +1755,17 @@ function WallDesign() {
           </Card>
 
           {/* 05 — About */}
-          <Card span="m-2" onClick={() => setOpen('about')}>
+          <Card span="m-2" delay={360} openLabel="about" onClick={() => setOpen('about')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="05 / about" label="the person behind the index" />
               <div className="wserif" style={{ fontSize: 'clamp(22px,3vw,28px)', lineHeight: 1.25, color: W.ink }}>
                 Software engineer. Occasional writer. Full-time cat observer.
-              </div>
+              </div>Divy97
             </div>
           </Card>
 
           {/* 06 — Write to me */}
-          <Card span="m-6" flat marks={false}>
+          <Card span="m-6" flat marks={false} delay={450}>
             <div className="card-inner" style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <div className="idx-num" style={{ marginBottom: 10 }}>06 / write to me</div>
@@ -1347,8 +1782,33 @@ function WallDesign() {
           </Card>
         </div>
 
-
+        {/* Colophon */}
+        <footer className="colophon">
+          <span>© {new Date().getFullYear()} divy parekh · handmade with react, caffeine & one imaginary cat</span>
+          <div className="barcode" aria-hidden>
+            {[3, 1, 2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 1, 3].map((w, i) => (
+              <i key={i} style={{ width: w, height: `${8 + ((i * 5) % 10)}px` }} />
+            ))}
+          </div>
+          <span className="sb-hide-m">type &ldquo;meow&rdquo; · press ⌘k</span>
+          <button className="menu-link sb-only-m" onClick={() => setPalette(true)} aria-label="open menu">
+            <span className="ml-icon">☰</span>menu
+          </button>
+        </footer>
       </div>
+
+      {/* Crosshair survey lines (desktop) */}
+      {desktop && (
+        <>
+          <div ref={hLineRef} style={{ position: 'fixed', left: 0, right: 0, top: 0, height: 1, background: 'var(--wall-line)', opacity: .5, pointerEvents: 'none', zIndex: 40, transform: 'translateY(-10px)' }} />
+          <div ref={vLineRef} style={{ position: 'fixed', top: 0, bottom: 0, left: 0, width: 1, background: 'var(--wall-line)', opacity: .5, pointerEvents: 'none', zIndex: 40, transform: 'translateX(-10px)' }} />
+          <div ref={tagRef} className="wmono" style={{ position: 'fixed', left: 0, top: 0, fontSize: 10, letterSpacing: '.08em', color: 'var(--wall-ink-soft)', pointerEvents: 'none', zIndex: 41, transform: 'translate(-100px,-100px)' }} />
+        </>
+      )}
+
+      <CursorMiso stageRef={stageRef} />
+
+      <CommandPalette open={palette} onClose={() => setPalette(false)} actions={actions} />
 
       {/* ── MODALS (4) ── */}
       <WModal open={open === 'journal'} onClose={() => setOpen(null)} wide>
