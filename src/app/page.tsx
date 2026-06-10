@@ -1791,7 +1791,7 @@ function WallDesign() {
 
         {/* Colophon */}
         <footer className="colophon">
-          <span>© {new Date().getFullYear()} divy parekh · handmade with react, caffeine & one imaginary cat</span>
+          <span>© {new Date().getFullYear()} Divy Parekh</span>
           <div className="barcode" aria-hidden>
             {[3, 1, 2, 1, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 1, 3].map((w, i) => (
               <i key={i} style={{ width: w, height: `${8 + ((i * 5) % 10)}px` }} />
