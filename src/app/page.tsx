@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react'
 
 const C = {
   thoughts: [
+    {date : "", text: "And still we sleep."},
     {date : "", text: "Shit happens :)"},
     { date: "", text: "Buy a chocolate" },
     { date: "", text: "Learning is not supposed to be fun. The primary feeling should be that of effort. It should look a lot less like that \"10 minute full body\" workout from your local digital media creator and a lot more like a serious session at the gym. You want the mental equivalent of sweating.\n\n— Andrej Karpathy" },
