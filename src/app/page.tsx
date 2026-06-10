@@ -542,8 +542,11 @@ const WALL_CSS = `
   .cmdk-item[data-active="true"] { background: color-mix(in oklab, var(--wall-accent) 9%, transparent); color: var(--wall-ink); }
   .cmdk-hint { font-size: 10px; letter-spacing: .12em; opacity: .7; }
 
-  /* github cells pop in as a wave */
-  .gh-cell { animation: ghin .45s ease backwards; }
+  /* github cells pop in as a wave — desktop only; the staggered scale-in of
+     ~370 cells flickers on mobile, so there they just render in place */
+  @media (min-width: 700px) {
+    .gh-cell { animation: ghin .45s ease backwards; }
+  }
   @keyframes ghin { from { opacity: 0; transform: scale(.2) } }
 
   /* cursor miso — pops up at the pointer when you "meow" while scrolled down,
@@ -763,9 +766,13 @@ function WallGitHubGraph({ username }: { username: string }) {
   const [shown, setShown] = useState(0)
   const [state, setState] = useState<'loading' | 'error' | 'ok'>('loading')
 
-  // Count the big number up from zero once data lands.
+  // Count the big number up from zero once data lands. The per-frame reflow
+  // flickers on small screens, so there we just snap to the final total.
   useEffect(() => {
     if (state !== 'ok' || total === 0) return
+    const small = typeof window !== 'undefined'
+      && (window.matchMedia('(max-width: 700px)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+    if (small) { setShown(total); return }
     let raf = 0
     const t0 = performance.now()
     const dur = 1400
@@ -809,7 +816,7 @@ function WallGitHubGraph({ username }: { username: string }) {
         <div className="idx-label"><ScrambleText text="last 12 months · the receipts" /></div>
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap' }}>
-        <div className="wserif" style={{ fontSize: 'clamp(34px, 5vw, 52px)', lineHeight: 1 }}>
+        <div className="wserif" style={{ fontSize: 'clamp(34px, 5vw, 52px)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
           {state === 'ok' ? shown.toLocaleString() : '—'}
           <span style={{ fontStyle: 'italic', color: W.accent }}> contributions</span>
         </div>
