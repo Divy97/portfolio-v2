@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react'
 
 const C = {
   thoughts: [
+    {date: "", text:"Did every pani-puri wala suddenly become subpar or what?"},
     {date : "", text: "Doston sambhalo mera code phat gaya..."},
     {date : "", text: "Let them be human — flawed, inconsistent, real."},
     {date : "", text: "And still we sleep."},
@@ -17,7 +18,7 @@ const C = {
     { date: "", text: "Umeed pe duniya Kayam hai" },
     { date: "", text: "Man has no freedom. Fate tosses him about in all directions. The game which Fate plays is unpredictable. Nothing lasts in this world. What has been gathered is scattered about. What was once at the top soon reaches the lowest position. Meetings only end in separations and, as for life, it only ends in death." },
     { date: "", text: "Aaj Delhi me, ek hotel me aag lagne se kuch logo ki maut ho gayi, thode din pehle train accident me huyi thi, kabhi bridge ke girne se toh kabhi kabar raste pe sirf chalne se ho jati hai, kuch logo ki maut\n\nJab jab desh ke kisi kone me hoti hai kisi ki maut tab tab mujhe yaad aata hai papa ka mujhe loan leke desh se bahar bhejne ka sapna aur \"mera desh ke liye kuch karna hai\" ye kehke unke uss sapne ko todne vala din" },
-    { date: "", text: "Z-value ne critical region me aake apni aukat dikha diya"}
+    { date: "", text: "Z-value ne critical region me aake apni aukat dikha diya"},
   ],
   poetry: [
     { body: "जो मेरे घर कभी नहीं आएंगे\nमैं उनसे मिलने\nउनके पास चला जाऊंगा।\nएक उफ़नती नदी कभी नहीं आएगी मेरे घर\nनदी जैसे लोगों से मिलने\nनदी किनारे जाऊंगा\nकुछ तैरूंगा और डूब जाऊंगा।\n\nपहाड़, टीले, चट्टानें, तालाब\nअसंख्य पेड़ खेत\nकभी नहीं आयेंगे मेरे घर\nखेत खलिहानों जैसे लोगों से मिलने\nगांव-गांव, जंगल-गलियां जाऊंगा।\n\nजो लगातार काम से लगे हैं\nमैं फुरसत से नहीं\nउनसे एक ज़रूरी काम की तरह\nमिलता रहूंगा।\nइसे मैं अकेली आख़िरी इच्छा की तरह\nसबसे पहली इच्छा रखना चाहूंगा।", author: "Vinod kumar shukla" },
