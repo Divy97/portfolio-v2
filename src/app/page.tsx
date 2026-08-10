@@ -765,6 +765,9 @@ function ExternalIcon() {
 
 interface ContributionDay { color: string; contributionCount: number; date: string }
 
+// GitHub's own level→shade ramp; the API returns levels, not colors.
+const GH_LEVELS = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']
+
 function WallGitHubGraph({ username }: { username: string }) {
   const [weeks, setWeeks] = useState<ContributionDay[][]>([])
   const [total, setTotal] = useState(0)
@@ -794,18 +797,22 @@ function WallGitHubGraph({ username }: { username: string }) {
     let active = true
     ;(async () => {
       try {
-        const res = await fetch(`https://github-contributions-api.deno.dev/${username}.json`)
+        const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`)
         if (!res.ok) throw new Error('fetch failed')
-        const data: { contributions: ContributionDay[][] } = await res.json()
-        const today = new Date()
-        const yearAgo = new Date()
-        yearAgo.setFullYear(today.getFullYear() - 1)
-        const filtered = data.contributions
-          .map(week => week.filter(d => { const dt = new Date(d.date); return dt >= yearAgo && dt <= today }))
-          .filter(week => week.length > 0)
+        const data: { total: { lastYear: number }; contributions: { date: string; count: number; level: number }[] } = await res.json()
+        // Flat day list → weekly columns, first column padded so row = weekday.
+        const days = data.contributions.map(d => ({ date: d.date, contributionCount: d.count, color: GH_LEVELS[d.level] ?? GH_LEVELS[0] }))
+        const cols: ContributionDay[][] = []
+        const pad = days.length ? new Date(`${days[0].date}T00:00:00`).getDay() : 0
+        let col: ContributionDay[] = Array.from({ length: pad }, () => ({ date: '', contributionCount: 0, color: GH_LEVELS[0] }))
+        for (const d of days) {
+          if (new Date(`${d.date}T00:00:00`).getDay() === 0 && col.length) { cols.push(col); col = [] }
+          col.push(d)
+        }
+        if (col.length) cols.push(col)
         if (!active) return
-        setWeeks(filtered)
-        setTotal(filtered.reduce((t, wk) => t + wk.reduce((s, d) => s + d.contributionCount, 0), 0))
+        setWeeks(cols)
+        setTotal(data.total.lastYear)
         setState('ok')
       } catch {
         if (active) setState('error')
