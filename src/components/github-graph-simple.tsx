@@ -14,9 +14,12 @@ interface ContributionDay {
 }
 
 interface GitHubContributionsResponse {
-  contributions: ContributionDay[][];
-  totalContributions: number;
+  total: { lastYear: number };
+  contributions: { date: string; count: number; level: number }[];
 }
+
+// GitHub's own level→shade ramp; the API returns levels, not colors.
+const GH_LEVELS = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'];
 
 export default function GitHubGraphSimple({ username }: GitHubGraphProps) {
   const [contributions, setContributions] = useState<ContributionDay[][]>([]);
@@ -30,39 +33,37 @@ export default function GitHubGraphSimple({ username }: GitHubGraphProps) {
         setLoading(true);
         
         // Use the dedicated GitHub contributions API
-        const response = await fetch(`https://github-contributions-api.deno.dev/${username}.json`);
-        
+        const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`);
+
         if (!response.ok) {
           throw new Error('Failed to fetch GitHub contributions');
         }
 
         const data: GitHubContributionsResponse = await response.json();
-        
-        // Calculate date range for last one year
-        const today = new Date();
-        const oneYearAgo = new Date();
-        oneYearAgo.setFullYear(today.getFullYear() - 1);
-        oneYearAgo.setMonth(today.getMonth());
-        oneYearAgo.setDate(today.getDate());
-        
-        // Filter for last one year contributions
-        const filteredContributions = data.contributions.map(week => 
-          week.filter(day => {
-            const dayDate = new Date(day.date);
-            return dayDate >= oneYearAgo && dayDate <= today;
-          })
-        ).filter(week => week.length > 0);
 
-        setContributions(filteredContributions);
-        
-        // Calculate total contributions for the period
-        const totalPeriod = filteredContributions.reduce((total, week) => {
-          return total + week.reduce((weekTotal, day) => {
-            return weekTotal + day.contributionCount;
-          }, 0);
-        }, 0);
-        
-        setTotalContributions(totalPeriod);
+        // Flat day list → weekly columns, first column padded so row = weekday.
+        const days: ContributionDay[] = data.contributions.map(d => ({
+          date: d.date,
+          contributionCount: d.count,
+          contributionLevel: String(d.level),
+          color: GH_LEVELS[d.level] ?? GH_LEVELS[0],
+        }));
+        const pad = days.length ? new Date(`${days[0].date}T00:00:00`).getDay() : 0;
+        const weeks: ContributionDay[][] = [];
+        let week: ContributionDay[] = Array.from({ length: pad }, () => ({
+          date: '', contributionCount: 0, contributionLevel: '0', color: GH_LEVELS[0],
+        }));
+        for (const day of days) {
+          if (new Date(`${day.date}T00:00:00`).getDay() === 0 && week.length) {
+            weeks.push(week);
+            week = [];
+          }
+          week.push(day);
+        }
+        if (week.length) weeks.push(week);
+
+        setContributions(weeks);
+        setTotalContributions(data.total.lastYear);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load contributions');
       } finally {
