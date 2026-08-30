@@ -88,9 +88,6 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", type: "image/x-icon" },
     ],
   },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
-  },
 };
 
 export default function RootLayout({
