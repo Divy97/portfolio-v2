@@ -1655,7 +1655,7 @@ function WallDesign() {
     { id: 'about',   label: 'open · about divy',                   hint: '05', run: () => setOpen('about') },
     { id: 'miso',    label: 'pet · miso the cat',                  hint: '=^.^=', run: () => window.dispatchEvent(new Event('miso-love')) },
     { id: 'email',   label: 'write · email me',                    hint: '06', run: () => { window.location.href = 'mailto:divyparekh1810@gmail.com' } },
-    { id: 'github',  label: 'visit · github',                      hint: '↗', run: () => window.open('https://github.com/Divy097', '_blank') },
+    { id: 'github',  label: 'visit · github',                      hint: '↗', run: () => window.open('https://github.com/Divy97', '_blank') },
     { id: 'resume',  label: 'read · resume',                       hint: '↗', run: () => window.open('https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view', '_blank') },
   ]
 
@@ -1794,7 +1794,7 @@ function WallDesign() {
               </div>
               <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }} className="wmono">
                 <a href="mailto:divyparekh1810@gmail.com" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>email →</a>
-                <a href="https://github.com/Divy097" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>github →</a>
+                <a href="https://github.com/Divy97" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>github →</a>
                 <a href="https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>resume →</a>
               </div>
             </div>
