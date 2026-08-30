@@ -28,7 +28,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 // Derive site URL from env, fallback to localhost for dev
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://divyparekh.me";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://divyparekh.xyz";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
