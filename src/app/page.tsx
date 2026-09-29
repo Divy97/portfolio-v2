@@ -6,6 +6,9 @@ import { useState, useEffect, useRef } from 'react'
 
 const C = {
   thoughts: [
+    {
+      text: "It might as well be you",
+    },
     { date: "Jul 26, 2026", text: "He resigned" },
     {date: "", text:"Did every pani-puri wala suddenly become subpar or what?"},
     {date : "", text: "Doston sambhalo mera code phat gaya..."},
