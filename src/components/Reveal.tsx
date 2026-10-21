@@ -14,7 +14,6 @@ interface RevealProps {
 export default function Reveal({ children, delay = 0, className = "", once = true }: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [hasRevealed, setHasRevealed] = useState(false);
 
   useEffect(() => {
     const element = ref.current;
@@ -24,7 +23,6 @@ export default function Reveal({ children, delay = 0, className = "", once = tru
       const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (prefersReducedMotion) {
         setIsVisible(true);
-        setHasRevealed(true);
         return;
       }
     }
@@ -36,12 +34,10 @@ export default function Reveal({ children, delay = 0, className = "", once = tru
             if (delay) {
               const timeout = setTimeout(() => {
                 setIsVisible(true);
-                setHasRevealed(true);
               }, delay);
               element.dataset.revealTimeoutId = String(timeout);
             } else {
               setIsVisible(true);
-              setHasRevealed(true);
             }
             if (once) observer.unobserve(entry.target);
           } else if (!once) {

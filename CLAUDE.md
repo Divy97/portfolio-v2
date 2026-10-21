@@ -15,33 +15,43 @@ No test suite is configured.
 
 ## Architecture
 
-This is a **single-page Next.js 15 portfolio site** (App Router) using React 19, TypeScript, Tailwind CSS v4, and shadcn/ui.
+This is a **single-page Next.js 15 portfolio site** (App Router) using React 19, TypeScript, and Tailwind CSS v4.
 
-- `src/app/page.tsx` — The entire portfolio lives here as a `'use client'` component. All data (projects, work experience) is defined inline as constants at the top of this file.
-- `src/app/layout.tsx` — Sets metadata, JSON-LD structured data, and loads the two Google Fonts.
-- `src/app/globals.css` — Tailwind v4 theme config and CSS custom properties for the design system.
-- `src/components/Reveal.tsx` — Scroll-triggered reveal animation wrapper using `IntersectionObserver`. Wrap sections in this for entrance animations.
-- `src/components/github-graph-simple.tsx` — Fetches GitHub contribution data from `github-contributions-api.deno.dev` and renders a contribution graph.
-- `src/components/work-experience.tsx` — Work experience timeline component.
-- `src/components/ui/button.tsx` — shadcn/ui Button component.
-- `src/lib/utils.ts` — `cn()` utility (clsx + tailwind-merge).
+- `src/app/page.tsx` — The entire homepage (the "Wall Index") lives here as a `'use client'` component. All data (projects, work experience, journal, songs) is defined inline as constants at the top of this file, and all of its CSS is the `WALL_CSS` string, injected by `<WallStyles/>`.
+- `src/app/layout.tsx` — Sets metadata, JSON-LD structured data, and loads the Google Fonts.
+- `src/app/opengraph-image.tsx` / `twitter-image.tsx` — The link-preview card, rendered at build time with `next/og`. Its colors are hardcoded copies of the wall tokens.
+- `src/app/api/spotify/route.ts` — Server-side Spotify proxy for the songs card. Spotify rate-limits this app hard, so the route caches the token, memoizes responses for 30s, refreshes top tracks hourly, and backs off per endpoint on 429.
+- `src/app/globals.css` — Tailwind v4 base and a few global rules (including a 44px min tap size for links/buttons on phones).
+- `src/app/prev/` — The previous design, kept at `/prev`. It is the only user of `src/components/Reveal.tsx`, `github-graph-simple.tsx`, and `work-experience.tsx`.
+- `src/components/ui/button.tsx`, `src/lib/utils.ts` — shadcn/ui leftovers, currently unused.
+
+### SEO constraint
+
+Everything on the homepage must be in the server HTML. Don't gate the wall behind client state:
+- The cat splash is an overlay on top of the already-rendered wall; `.wall.booting` pauses entrance animations until it goes.
+- Modals (`WModal`) and their tab panels are always rendered and hidden with the `hidden` attribute, not unmounted. `WModal` remounts its content on close so each open starts fresh.
 
 ## Design System
 
-Colors are defined as CSS variables in `globals.css` and should always be used via Tailwind tokens or these variables — never hardcoded hex values in components:
+The homepage is dark. Colors are CSS variables on `:root` in `WALL_CSS`, read in components through the `W` object — never hardcode hex values in components:
 
-| Variable | Hex | Usage |
+| Variable | Value | Usage |
 |---|---|---|
-| `--cream` | `#F3E2D4` | Page background |
-| `--lavender` | `#C5B0CD` | Borders, subtle accents |
-| `--slate-blue` | `#415E72` | Primary buttons, key elements |
-| `--dark-blue` | `#17313E` | Primary text |
+| `--wall-bg` | `#101113` | Page background |
+| `--wall-bg-deep` | `#090a0c` | Deep card background (work card) |
+| `--wall-card` | `#17181b` | Modal and card surfaces |
+| `--wall-ink` | `#e8e5de` | Primary text, strong borders |
+| `--wall-ink-soft` | `#8f939a` | Secondary text |
+| `--wall-line` | `#2d3035` | Hairlines and grid lines |
+| `--wall-accent` | `oklch(0.70 0.19 28)` | Coral accent: highlights, ink marks |
 
-**Typography:**
-- `var(--font-playwrite-hu)` / Tailwind `font-display` — headings and display text (cursive/handwriting)
-- `var(--font-work-sans)` / Tailwind `font-sans` — all body text and UI
+**Typography** (all loaded in `layout.tsx`):
+- `.wserif` — Instrument Serif: headlines and body copy
+- `.wmono` — JetBrains Mono: labels, indexes, metadata
+- `.ink-hand` — Playwrite HU: handwritten margin notes in the ink layer
+- Work Sans: base UI font on `.wall`
 
-Use the CSS font utility classes from `globals.css` (e.g. `playwrite-hu-400`, `work-sans-600`) rather than one-off Tailwind font utilities.
+**Ink layer:** hand-drawn notes and doodles drawn over the grid. Path data lives in the `INK` object; render with `<Ink>`, `<InkNote>`, and `<ScribbleLink>`. Strokes draw in only once `.wall` has `.inked` (after the welcome modal closes), and appear fully drawn under `prefers-reduced-motion`.
 
 ## Adding Content
 
