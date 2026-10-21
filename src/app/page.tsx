@@ -74,6 +74,7 @@ interface Project {
   liveUrl: string
   techStack: string[]
   keyFeatures: string[]
+  featured?: boolean
 }
 
 const projectsData: { serious: Project[]; fun: Project[] } = {
@@ -84,6 +85,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       description: "Issue resolution and verification platform: open a GitHub issue, get back a pull request that proves the bug existed before the fix and is gone after it, verified by tests the engine runs itself.",
       githubUrl: "https://github.com/Divy97/Repro",
       liveUrl: "https://test-framework.fly.dev",
+      featured: true,
       techStack: ["TypeScript", "Node.js", "PostgreSQL", "Vercel Sandbox", "Docker", "Claude API", "Next.js", "Fly.io"],
       keyFeatures: [
         "Built an issue-to-PR pipeline that reproduces reported bugs, orchestrates AI-generated fixes, and opens pull requests with test evidence; an independent engine checks the reproduction and regression suite on both original and patched commits",
@@ -98,6 +100,7 @@ const projectsData: { serious: Project[]; fun: Project[] } = {
       description: "Multimodal personal memory: save notes, voice memos, photos, PDFs, and links from any device, then ask in plain language and get back the exact thing you saved, cited to its source.",
       githubUrl: "https://github.com/Divy97/second-brain",
       liveUrl: "https://usesecondbrain.vercel.app/",
+      featured: true,
       techStack: ["Cloudflare Workers", "Cloudflare Workflows", "PostgreSQL", "pgvector", "Hono", "Next.js", "TypeScript", "OpenRouter", "WXT"],
       keyFeatures: [
         "Built a resumable ingestion pipeline on Cloudflare Workers/Workflows for notes, voice, images, PDFs, web pages, YouTube transcripts, and Instagram reel audio; preserves raw input and retries extraction stages independently",
@@ -603,6 +606,87 @@ const WALL_CSS = `
     padding: 2px 11px; white-space: nowrap; border-radius: 13px; opacity: 0;
   }
   .cursor-miso.show .pocket-bubble { animation: misobubble .3s ease .12s forwards; }
+
+  /* ink layer — hand-drawn notes and doodles scribbled over the index.
+     Every stroke uses pathLength=1, so one dash rule draws any path in. */
+  .ink-hand {
+    font-family: var(--font-playwrite-hu), cursive; font-size: 13px; line-height: 1.6;
+    color: var(--wall-ink-soft); letter-spacing: 0; text-transform: none; white-space: nowrap;
+  }
+  .ink-svg {
+    display: block; overflow: visible; fill: none;
+    stroke: color-mix(in oklab, var(--wall-ink) 72%, transparent);
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .ink-svg.stretch path { vector-effect: non-scaling-stroke; }
+  .ink-path {
+    stroke-dasharray: 1 1.05; stroke-dashoffset: 1.03;
+    animation: inkdraw .9s cubic-bezier(.6,.1,.3,1) forwards;
+    animation-delay: calc(var(--d, 0ms) + var(--ink-delay, 900ms) + var(--i, 0) * 160ms);
+  }
+  .ink-svg.redraw { --d: 0ms; --ink-delay: 0ms; }
+  @keyframes inkdraw { to { stroke-dashoffset: 0 } }
+
+  /* handwriting writes itself in, left to right */
+  .ink-write {
+    display: inline-block; clip-path: inset(0 100% 0 0);
+    animation: inkwrite 1.1s cubic-bezier(.5,.1,.4,1) forwards;
+    animation-delay: calc(var(--d, 0ms) + var(--ink-delay, 900ms));
+  }
+  @keyframes inkwrite { to { clip-path: inset(0 0 0 0) } }
+
+  /* hold every ink animation until the welcome modal is closed */
+  .wall:not(.inked) .ink-path, .wall:not(.inked) .ink-write { animation-play-state: paused; }
+
+  /* margin notes only where there's a margin to write in */
+  .ink-note { position: absolute; z-index: 3; pointer-events: none; display: none; font-size: 13px; line-height: 1.6; }
+  @media (min-width: 1024px) { .ink-note { display: block; } }
+  .doodle { position: absolute; z-index: 0; pointer-events: none; display: none; }
+  @media (min-width: 640px) { .doodle { display: block; } .doodle-pad { padding-right: 96px; } }
+
+  .ink-mark { position: relative; display: inline-block; }
+  .ink-mark > .ink-ring { position: absolute; left: -2%; bottom: .02em; width: 104%; height: .16em; }
+
+  .ink-circled { position: relative; display: flex; gap: 8px; flex-shrink: 0; }
+  .ink-circled .chip { max-width: none; }
+  .ink-circled > .ink-ring { position: absolute; inset: -10px -14px; }
+
+  .ink-stamp {
+    position: relative; display: inline-block; vertical-align: middle;
+    margin-left: 14px; padding: 2px 12px; transform: rotate(-5deg);
+    font-size: 12px; color: var(--wall-accent);
+  }
+  .ink-stamp > .ink-ring { position: absolute; inset: -6px -8px; }
+
+  /* links get a scribbled underline on hover instead of a plain rule */
+  .scribble-link {
+    position: relative; color: var(--wall-ink); text-decoration: none;
+    border-bottom: 1px solid var(--wall-ink); padding-bottom: 2px; transition: border-color .25s;
+  }
+  .scribble-link > svg { position: absolute; left: -4%; bottom: -6px; width: 108%; height: 9px; }
+  .scribble-link path {
+    stroke: var(--wall-accent); stroke-width: 2;
+    stroke-dasharray: 1 1.05; stroke-dashoffset: 1.03; transition: stroke-dashoffset .45s cubic-bezier(.6,.1,.3,1);
+  }
+  .scribble-link:hover { border-bottom-color: transparent; }
+  .scribble-link:hover path { stroke-dashoffset: 0; }
+
+  /* the paper plane takes off while you hover "email" */
+  .say-card:has(.mail-link:hover) .plane { animation: planefly 1.6s cubic-bezier(.5,0,.3,1) infinite; }
+  @keyframes planefly {
+    0%   { transform: none; opacity: 1; }
+    55%  { transform: translate(180px, -70px) rotate(-10deg); opacity: 0; }
+    56%  { transform: translate(-40px, 24px); opacity: 0; }
+    100% { transform: none; opacity: 1; }
+  }
+
+  .zz { position: absolute; color: var(--wall-accent); font-size: 12px; animation: zzfloat 3.2s ease-in-out infinite; }
+  @keyframes zzfloat { 0%, 100% { transform: translateY(0); opacity: .9 } 50% { transform: translateY(-5px); opacity: .45 } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ink-path, .ink-write { animation: none; stroke-dashoffset: 0; clip-path: none; }
+    .say-card:has(.mail-link:hover) .plane, .zz { animation: none; }
+  }
 `
 
 // Rendered as a server-side <style> tag so the dark wall paints correctly
@@ -864,10 +948,9 @@ function WallGitHubGraph({ username }: { username: string }) {
           {state === 'ok' ? shown.toLocaleString() : '—'}
           <span style={{ fontStyle: 'italic', color: W.accent }}> contributions</span>
         </div>
-        <a href={`https://github.com/${username}`} target="_blank" rel="noreferrer"
-           className="wmono" style={{ fontSize: 12, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>
+        <ScribbleLink href={`https://github.com/${username}`} className="wmono" style={{ fontSize: 12, letterSpacing: '.04em' }}>
           @{username} →
-        </a>
+        </ScribbleLink>
       </div>
 
       {state === 'loading' && (
@@ -1349,6 +1432,87 @@ function WModal({ open, onClose, children, wide }: {
   )
 }
 
+// ─── INK LAYER (hand-drawn notes + doodles) ──────────────────────────────────
+
+// Strokes are drawn in the order given; `accent` lists the indexes inked in orange.
+const INK = {
+  quill:      { box: '0 0 64 64', paths: ['M54 6 C34 10 22 26 22 44 C38 40 50 26 54 6', 'M54 6 C44 20 30 36 14 56', 'M46 16 L38 18', 'M41 26 L33 27', 'M6 60 c4 -4 8 4 12 0 s8 4 12 0'], accent: [4] },
+  headphones: { box: '0 0 64 64', paths: ['M12 40 C10 18 26 10 32 10 C38 10 54 18 52 40', 'M9 38 C9 35 15 35 16 38 L17 52 C17 55 11 56 10 53 Z', 'M55 38 C55 35 49 35 48 38 L47 52 C47 55 53 56 54 53 Z', 'M60 20 V6 L68 3 V15', 'M60 20 c-1 -3 -7 -1 -6 2 c1 3 6 1 6 -2'], accent: [3, 4] },
+  coffee:     { box: '0 0 80 80', paths: ['M16 34 L60 34 L56 62 C55 68 50 70 46 70 L30 70 C26 70 21 68 20 62 Z', 'M59 40 C70 38 72 50 66 54 C63 57 58 56 57 55', 'M8 74 C30 79 50 79 72 74', 'M30 28 C24 22 34 18 28 10', 'M42 28 C36 22 46 18 40 8', 'M38 46 c-2 -3 -6 -1 -4 2 l4 4 l4 -4 c2 -3 -2 -5 -4 -2'], accent: [3, 4, 5] },
+  sleepyCat:  { box: '0 0 96 60', paths: ['M12 52 C10 36 24 26 44 26 C64 26 80 34 80 52 L12 52', 'M18 33 L21 20 L29 28', 'M33 27 L39 16 L42 27', 'M22 39 q3 3 6 0', 'M33 38 q3 3 6 0', 'M80 50 C92 50 92 38 84 36'], accent: [] },
+  plane:      { box: '0 0 64 48', paths: ['M4 22 L60 4 L40 44 L30 28 Z', 'M30 28 L60 4', 'M30 28 L28 40 L36 34'], accent: [] },
+  paw:        { box: '0 0 40 40', paths: ['M20 22 C13 22 9 29 12 33 C15 36 18 34 20 34 C22 34 25 36 28 33 C31 29 27 22 20 22 Z', 'M8 19 c-3 -1 -3 -7 0 -7 c3 0 3 6 0 7 Z', 'M15 13 c-3 -1 -3 -7 0 -7 c3 0 3 6 0 7 Z', 'M25 13 c-3 -1 -3 -7 0 -7 c3 0 3 6 0 7 Z', 'M32 19 c-3 -1 -3 -7 0 -7 c3 0 3 6 0 7 Z'], accent: [] },
+  arrowLeft:  { box: '0 0 70 30', paths: ['M68 18 C50 8 26 6 6 14', 'M14 6 L5 14 L15 20'], accent: [] },
+  arrowDown:  { box: '0 0 40 56', paths: ['M30 4 C10 10 6 30 14 50', 'M7 42 L14 51 L21 43'], accent: [] },
+  arrowDownLeft: { box: '0 0 60 48', paths: ['M56 4 C36 2 14 12 9 40', 'M3 31 L9 41 L17 32'], accent: [] },
+  underline:  { box: '0 0 200 24', paths: ['M4 14 C50 6 120 4 196 9', 'M24 20 C80 13 140 13 182 16'], accent: [0, 1] },
+  loop:       { box: '0 0 200 50', paths: ['M24 8 C80 -1 186 2 195 22 C201 40 130 49 70 46 C20 43 1 32 6 18 C10 8 40 3 64 4'], accent: [0] },
+} as const
+
+type InkName = keyof typeof INK
+
+// A self-drawing ink sketch. With `redrawOnHover`, it sketches itself again
+// every time the pointer enters its card.
+function Ink({ name, width, height, stretch, redrawOnHover, delay, className = '', style }: {
+  name: InkName; width?: number | string; height?: number | string; stretch?: boolean
+  redrawOnHover?: boolean; delay?: number; className?: string; style?: React.CSSProperties
+}) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const [run, setRun] = useState(0)
+  const { box, paths, accent } = INK[name]
+
+  useEffect(() => {
+    if (!redrawOnHover) return
+    const mod = ref.current?.closest('.module')
+    if (!mod) return
+    const h = () => setRun(r => r + 1)
+    mod.addEventListener('mouseenter', h)
+    return () => mod.removeEventListener('mouseenter', h)
+  }, [redrawOnHover])
+
+  const vars: React.CSSProperties = delay === undefined ? {} : { ['--ink-delay' as string]: `${delay}ms` }
+  return (
+    <span ref={ref} className={className} style={{ ...vars, ...style }} aria-hidden>
+      <svg key={run} viewBox={box} width={width ?? '100%'} height={height ?? '100%'}
+        preserveAspectRatio={stretch ? 'none' : undefined}
+        className={`ink-svg ${stretch ? 'stretch' : ''} ${run ? 'redraw' : ''}`}>
+        {paths.map((d, i) => (
+          <path key={i} d={d} pathLength={1} className="ink-path"
+            style={{ ['--i' as string]: i, stroke: (accent as readonly number[]).includes(i) ? W.accent : undefined }} />
+        ))}
+      </svg>
+    </span>
+  )
+}
+
+// A handwritten margin note that writes itself in, with an optional arrow.
+function InkNote({ text, arrow, arrowStyle, delay = 900, accent, style }: {
+  text: string; arrow?: InkName; arrowStyle?: React.CSSProperties
+  delay?: number; accent?: boolean; style?: React.CSSProperties
+}) {
+  return (
+    <div className="ink-note" style={{ ['--ink-delay' as string]: `${delay}ms`, ...style }} aria-hidden>
+      <span className="ink-hand ink-write" style={accent ? { color: W.accent } : undefined}>{text}</span>
+      {arrow && <Ink name={arrow} delay={delay + 700} style={{ position: 'absolute', display: 'block', ...arrowStyle }} />}
+    </div>
+  )
+}
+
+function ScribbleLink({ href, children, className = '', style }: {
+  href: string; children: React.ReactNode; className?: string; style?: React.CSSProperties
+}) {
+  const external = href.startsWith('http')
+  return (
+    <a href={href} className={`scribble-link ${className}`} style={style}
+      target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}>
+      {children}
+      <svg viewBox="0 0 100 10" preserveAspectRatio="none" className="ink-svg stretch" aria-hidden>
+        <path d="M2 6 C30 2 70 9 98 4" pathLength={1} />
+      </svg>
+    </a>
+  )
+}
+
 // ─── CARD (grid module) ─────────────────────────────────────────────────────
 
 function Card({ span = '', onClick, children, dark, deep, flat, marks = true, delay = 0, openLabel }: {
@@ -1542,7 +1706,12 @@ function ProjectsModalBody() {
       {isProjects && projectsData[tab].map((p, i, arr) => (
         <div key={p.id} style={{ padding: '20px 0', borderBottom: i < arr.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           <div className="modal-split" style={{ marginBottom: 8 }}>
-            <div className="wserif modal-split-main" style={{ fontSize: 26, lineHeight: 1.1 }}>{p.name}</div>
+            <div className="wserif modal-split-main" style={{ fontSize: 26, lineHeight: 1.1 }}>
+              {p.name}
+              {p.featured && (
+                <span className="ink-stamp ink-hand">start here<Ink name="loop" className="ink-ring" stretch delay={350 + i * 250} /></span>
+              )}
+            </div>
             <div className="modal-actions">
               {p.githubUrl && <a href={p.githubUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit' }} aria-label={`${p.name} GitHub`} onMouseEnter={e => (e.currentTarget.style.color = W.ink)} onMouseLeave={e => (e.currentTarget.style.color = W.inkSoft)}><GithubIcon /></a>}
               {p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noreferrer" style={{ color: 'inherit' }} aria-label={`${p.name} live`} onMouseEnter={e => (e.currentTarget.style.color = W.ink)} onMouseLeave={e => (e.currentTarget.style.color = W.inkSoft)}><ExternalIcon /></a>}
@@ -1603,12 +1772,19 @@ function WallDesign() {
   const vLineRef = useRef<HTMLDivElement>(null)
   const hLineRef = useRef<HTMLDivElement>(null)
   const tagRef = useRef<HTMLDivElement>(null)
+  const welcomed = useRef(false)
+  const [inked, setInked] = useState(false)
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase('ready'), 1500)
-    const t2 = setTimeout(() => setOpen('about'), 2100)
+    const t2 = setTimeout(() => { welcomed.current = true; setOpen('about') }, 2100)
     return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
+
+  // The ink draws itself in only once the welcome modal is out of the way.
+  useEffect(() => {
+    if (welcomed.current && open !== 'about') setInked(true)
+  }, [open])
 
   // Live listening — falls back to the first curated track until data lands.
   const liveTrack = spotify?.nowPlaying ?? spotify?.recent ?? null
@@ -1701,7 +1877,7 @@ function WallDesign() {
   )
 
   return (
-    <div className="wall">
+    <div className={`wall ${inked ? 'inked' : ''}`}>
       <WallStyles />
       <style>{eqCss}</style>
       <div className="wall-inner">
@@ -1725,10 +1901,12 @@ function WallDesign() {
           style={{ position: 'relative', marginBottom: 8 }}>
           <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <div className="wserif" style={{ fontSize: 'clamp(24px, 7vw, 96px)', lineHeight: .98, letterSpacing: '-.03em', color: W.ink }}>
+              <div className="wserif" style={{ position: 'relative', fontSize: 'clamp(24px, 7vw, 96px)', lineHeight: .98, letterSpacing: '-.03em', color: W.ink }}>
                 <span className="hero-line"><span style={{ animationDelay: '.05s' }}>The Internet&apos;s not</span></span>
                 <span className="hero-line"><span style={{ animationDelay: '.16s' }}>written in pencil, Mark.</span></span>
-                <span className="hero-line"><span style={{ animationDelay: '.27s' }}>It&apos;s written in <span style={{ fontStyle: 'italic', color: W.accent }}>ink</span>.</span></span>
+                <span className="hero-line"><span style={{ animationDelay: '.27s' }}>It&apos;s written in <span className="ink-mark" style={{ fontStyle: 'italic', color: W.accent }}>ink<Ink name="underline" className="ink-ring" stretch delay={500} /></span>.</span></span>
+                <InkNote text="— Erica Albright, The Social Network" arrow="arrowLeft" delay={1100}
+                  style={{ left: 'calc(100% + 76px)', top: '41%' }} arrowStyle={{ left: -78, top: -8, width: 70, height: 30 }} />
               </div>
               <div className="wserif" style={{ fontSize: 'clamp(14px, 1.8vw, 20px)', color: W.inkSoft, marginTop: 16, fontStyle: 'italic', minHeight: '1.6em' }}>
                 <Typewriter phrases={TAGLINES} />
@@ -1737,6 +1915,10 @@ function WallDesign() {
           </div>
 
           {desktop && <MisoCat stageRef={stageRef} />}
+          <InkNote text="a cat lives here. try typing “meow”" delay={1900}
+            style={{ right: '6%', bottom: 14 }} />
+          {desktop && <Ink name="paw" width={22} height={22} delay={2600}
+            style={{ position: 'absolute', right: 'calc(6% - 30px)', bottom: 18, transform: 'rotate(-18deg)' }} />}
         </section>
 
         {/* Divider */}
@@ -1748,15 +1930,18 @@ function WallDesign() {
           {/* 01 — GitHub graph */}
           <Card span="m-6" flat>
             <WallGitHubGraph username="divy97" />
+            <InkNote text="yes, (almost) every single day" arrow="arrowDown" delay={1300}
+              style={{ right: '22%', top: 22 }} arrowStyle={{ left: -34, top: 14, width: 40, height: 56 }} />
           </Card>
 
           {/* 02 — Journal (daily writing) */}
           <Card span="m-4" delay={90} openLabel="journal" onClick={() => setOpen('journal')}>
             <div className="card-inner" style={{ justifyContent: 'space-between' }}>
               <ModHead num="02 / journal" label="thoughts · poetry" />
-              <div className="wserif" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.12 }}>
+              <div className="wserif doodle-pad" style={{ fontSize: 'clamp(26px, 4vw, 42px)', lineHeight: 1.12 }}>
                 &ldquo;{C.thoughts[0].text}&rdquo;
               </div>
+              <Ink name="quill" redrawOnHover className="doodle" style={{ right: 22, top: 40, width: 72, height: 72 }} />
               <div className="ticker-line" style={{ fontSize: 11, color: W.inkSoft, borderTop: `1px solid ${W.line}`, paddingTop: 10 }}>
                 <span className="wmono">{ticker}  ·  {ticker}  ·  </span>
               </div>
@@ -1779,10 +1964,14 @@ function WallDesign() {
                   ))}
                 </div>
               </div>
+              <Ink name="headphones" redrawOnHover className="doodle" style={{ right: 26, top: 44, width: 56, height: 56 }} />
               <div>
                 <div className="wmono" style={{ fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: isPlaying ? W.accent : W.inkSoft, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6 }}>
                   {isPlaying && <span className="spot-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: W.accent, display: 'inline-block' }} />}
                   {songStatus}
+                  <span className="ink-hand ink-write" style={{ marginLeft: 8, fontSize: 12, ['--ink-delay' as string]: '1100ms' }} aria-hidden>
+                    ← stuck in my head rn
+                  </span>
                 </div>
                 <div className="wserif" style={{ fontSize: 24, lineHeight: 1.1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{songTitle}</div>
                 <div className="wmono" style={{ fontSize: 11, color: W.inkSoft, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>— {songArtist}</div>
@@ -1799,10 +1988,19 @@ function WallDesign() {
                 <span style={{ fontStyle: 'italic', color: W.accent }}>and caffeine.</span>
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {projectsData.serious.slice(0, 5).map(p => <span key={p.id} className="chip">{p.name}</span>)}
+                <span className="ink-circled">
+                  {projectsData.serious.slice(0, 2).map(p => <span key={p.id} className="chip">{p.name}</span>)}
+                  <Ink name="loop" className="ink-ring" stretch />
+                </span>
+                <span className="ink-hand ink-write" aria-hidden
+                  style={{ alignSelf: 'center', margin: '0 10px 0 6px', color: W.accent, ['--ink-delay' as string]: '1500ms' }}>
+                  ← start with these two
+                </span>
+                {projectsData.serious.slice(2, 5).map(p => <span key={p.id} className="chip">{p.name}</span>)}
                 <span className="chip" style={{ borderStyle: 'dashed', color: W.inkSoft }}>+ {projectsData.fun.length} more →</span>
               </div>
             </div>
+            <Ink name="coffee" redrawOnHover className="doodle" style={{ right: '7%', top: 40, width: 84, height: 84 }} />
           </Card>
 
           {/* 05 — About */}
@@ -1811,23 +2009,27 @@ function WallDesign() {
               <ModHead num="05 / about" label="the person behind the index" />
               <div className="wserif" style={{ fontSize: 'clamp(22px,3vw,28px)', lineHeight: 1.25, color: W.ink }}>
                 Software engineer. Occasional writer. Full-time cat observer.
-              </div>Divy97
+              </div>
             </div>
+            <Ink name="sleepyCat" redrawOnHover className="doodle" style={{ right: 22, top: 50, width: 88, height: 55 }} />
+            <span className="doodle ink-hand zz" style={{ right: 92, top: 40 }} aria-hidden>z z</span>
           </Card>
 
           {/* 06 — Write to me */}
-          <Card span="m-6" flat marks={false} delay={450}>
+          <Card span="m-6 say-card" flat marks={false} delay={450}>
             <div className="card-inner" style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
               <div>
                 <div className="idx-num" style={{ marginBottom: 10 }}>06 / write to me</div>
                 <div className="wserif" style={{ fontSize: 'clamp(40px,6vw,56px)', lineHeight: 1, letterSpacing: '-.01em' }}>
                   Say <span style={{ fontStyle: 'italic', color: W.accent }}>hello.</span>
+                  <Ink name="plane" className="plane" width={52} height={39}
+                    style={{ display: 'inline-block', marginLeft: 14, verticalAlign: 'middle' }} />
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }} className="wmono">
-                <a href="mailto:divyparekh1810@gmail.com" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>email →</a>
-                <a href="https://github.com/Divy97" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>github →</a>
-                <a href="https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: W.ink, borderBottom: `1px solid ${W.ink}`, paddingBottom: 2, textDecoration: 'none', letterSpacing: '.04em' }}>resume →</a>
+                <ScribbleLink href="mailto:divyparekh1810@gmail.com" className="mail-link" style={{ fontSize: 13, letterSpacing: '.04em' }}>email →</ScribbleLink>
+                <ScribbleLink href="https://github.com/Divy97" style={{ fontSize: 13, letterSpacing: '.04em' }}>github →</ScribbleLink>
+                <ScribbleLink href="https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view" style={{ fontSize: 13, letterSpacing: '.04em' }}>resume →</ScribbleLink>
               </div>
             </div>
           </Card>
