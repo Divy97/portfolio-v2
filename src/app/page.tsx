@@ -1,5 +1,4 @@
 'use client'
-import { data } from 'framer-motion/client';
 import { useState, useEffect, useRef } from 'react'
 
 // ─── CONTENT ────────────────────────────────────────────────────────────────
@@ -447,6 +446,11 @@ const WALL_CSS = `
   .chip-solid { background: var(--wall-accent); border-color: var(--wall-accent); color: #fff; }
 
   /* Modal */
+  :where(.wall) :where(h1, h2) { margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; }
+  .wmodal-backdrop[hidden] { display: none; }
+  .wall-splash { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; background: var(--wall-bg, #101113); }
+  body:has(.wall-splash) { overflow: hidden; }
+  .wall.booting *, .wall.booting *::before, .wall.booting *::after { animation-play-state: paused !important; }
   .wmodal-backdrop {
     position: fixed; inset: 0; background: rgba(20,25,35,0.62);
     backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center;
@@ -670,6 +674,12 @@ const WALL_CSS = `
   }
   .scribble-link:hover { border-bottom-color: transparent; }
   .scribble-link:hover path { stroke-dashoffset: 0; }
+  /* Phones: globals.css gives links a 44px min box, which pushed the underline
+     ~30px below the words. Keep the 44px tap target on an invisible layer instead. */
+  @media (max-width: 768px) {
+    .scribble-link { min-height: 0; min-width: 0; }
+    .scribble-link::after { content: ''; position: absolute; left: -8px; right: -8px; top: 50%; height: 44px; transform: translateY(-50%); }
+  }
 
   /* the paper plane takes off while you hover "email" */
   .say-card:has(.mail-link:hover) .plane { animation: planefly 1.6s cubic-bezier(.5,0,.3,1) infinite; }
@@ -839,8 +849,8 @@ interface SpotifyData {
   top?: SpotifyTrack[]
 }
 
-// Polls the server route for live listening data. Re-fetches every 30s
-// (Spotify has no push). Returns null until the first response lands.
+// Polls the server route for live listening data. Re-fetches every 30s while
+// the tab is visible (Spotify has no push). Returns null until the first response lands.
 function useSpotify(): SpotifyData | null {
   const [data, setData] = useState<SpotifyData | null>(null)
   useEffect(() => {
@@ -853,9 +863,14 @@ function useSpotify(): SpotifyData | null {
         if (active) setData(d)
       } catch { /* keep last good / curated fallback */ }
     }
-    load()
-    const id = setInterval(load, 30_000)
-    return () => { active = false; clearInterval(id) }
+    // Only poll while the tab is visible; catch up as soon as it comes back.
+    let id: ReturnType<typeof setInterval> | undefined
+    const start = () => { if (!id) { load(); id = setInterval(load, 30_000) } }
+    const stop = () => { clearInterval(id); id = undefined }
+    const onVis = () => (document.hidden ? stop() : start())
+    if (!document.hidden) start()
+    document.addEventListener('visibilitychange', onVis)
+    return () => { active = false; stop(); document.removeEventListener('visibilitychange', onVis) }
   }, [])
   return data
 }
@@ -939,10 +954,10 @@ function WallGitHubGraph({ username }: { username: string }) {
 
   return (
     <div className="card-inner">
-      <div className="head-row">
-        <div className="idx-num">01 / github</div>
-        <div className="idx-label"><ScrambleText text="last 12 months · the receipts" /></div>
-      </div>
+      <h2 className="head-row">
+        <span className="idx-num">01 / github</span>
+        <span className="idx-label"><ScrambleText text="last 12 months · the receipts" /></span>
+      </h2>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 14, flexWrap: 'wrap' }}>
         <div className="wserif" style={{ fontSize: 'clamp(34px, 5vw, 52px)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>
           {state === 'ok' ? shown.toLocaleString() : '—'}
@@ -954,8 +969,8 @@ function WallGitHubGraph({ username }: { username: string }) {
       </div>
 
       {state === 'loading' && (
-        // eslint-disable-next-line @next/next/no-img-element
         <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/loader.svg" alt="loading" width={80} height={60} />
         </div>
       )}
@@ -1411,20 +1426,22 @@ function CursorMiso({ stageRef }: { stageRef: React.RefObject<HTMLDivElement | n
 
 // ─── MODAL ────────────────────────────────────────────────────────────────────
 
-function WModal({ open, onClose, children, wide }: {
-  open: boolean; onClose: () => void; children: React.ReactNode; wide?: boolean
+// Always rendered (hidden while closed) so the content is in the server HTML for
+// crawlers. Remounted on close, so every open starts fresh at the top/first tab.
+function WModal({ open, onClose, children, wide, label }: {
+  open: boolean; onClose: () => void; children: React.ReactNode; wide?: boolean; label: string
 }) {
+  const [gen, setGen] = useState(0)
   useEffect(() => {
-    if (!open) return
+    if (!open) { setGen(g => g + 1); return }
     const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', h)
     document.body.style.overflow = 'hidden'
     return () => { window.removeEventListener('keydown', h); document.body.style.overflow = '' }
   }, [open, onClose])
-  if (!open) return null
   return (
-    <div className="wmodal-backdrop" onClick={onClose}>
-      <div className={`wmodal ${wide ? 'wide' : ''}`} onClick={e => e.stopPropagation()}>
+    <div key={gen} className="wmodal-backdrop" onClick={onClose} hidden={!open}>
+      <div className={`wmodal ${wide ? 'wide' : ''}`} onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={label}>
         <button className="wmodal-close" onClick={onClose}>[ esc ]</button>
         {children}
       </div>
@@ -1532,10 +1549,10 @@ function Card({ span = '', onClick, children, dark, deep, flat, marks = true, de
 
 function ModHead({ num, label, light }: { num: string; label: string; light?: boolean }) {
   return (
-    <div className="head-row">
-      <div className="idx-num" style={light ? { color: W.accent } : undefined}>{num}</div>
-      <div className="idx-label" style={light ? { color: 'rgba(232,234,236,.6)' } : undefined}><ScrambleText text={label} /></div>
-    </div>
+    <h2 className="head-row">
+      <span className="idx-num" style={light ? { color: W.accent } : undefined}>{num}</span>
+      <span className="idx-label" style={light ? { color: 'rgba(232,234,236,.6)' } : undefined}><ScrambleText text={label} /></span>
+    </h2>
   )
 }
 
@@ -1544,8 +1561,8 @@ function ModHead({ num, label, light }: { num: string; label: string; light?: bo
 function TrackRow({ t }: { t: SpotifyTrack }) {
   const inner = (
     <>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       {t.albumImageUrl
+        // eslint-disable-next-line @next/next/no-img-element
         ? <img className="track-art" src={t.albumImageUrl} alt="" width={46} height={46} />
         : <div className="track-art" />}
       <div style={{ minWidth: 0 }}>
@@ -1566,11 +1583,11 @@ function SongsModalBody({ spotify }: { spotify: SpotifyData | null }) {
   return (
     <>
       <div className="idx-num" style={{ marginBottom: 6 }}>03 / on repeat</div>
-      <div className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 28, letterSpacing: '-.02em' }}>Songs.</div>
+      <h2 className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 28, letterSpacing: '-.02em' }}>Songs.</h2>
 
       {spotify === null && (
-        // eslint-disable-next-line @next/next/no-img-element
         <div style={{ display: 'flex', justifyContent: 'center', padding: '24px 0' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/loader.svg" alt="loading" width={80} height={60} />
         </div>
       )}
@@ -1591,6 +1608,14 @@ function SongsModalBody({ spotify }: { spotify: SpotifyData | null }) {
           {top.map((t, i) => <TrackRow key={i} t={t} />)}
         </div>
       )}
+
+      {/* Spotify unconfigured, down or rate-limited — show the curated list instead of nothing. */}
+      {spotify !== null && !live && top.length === 0 && (
+        <div>
+          <div className="idx-label" style={{ marginBottom: 6 }}>on repeat this month</div>
+          {C.songs.map(t => <TrackRow key={t.title} t={t} />)}
+        </div>
+      )}
     </>
   )
 }
@@ -1607,9 +1632,9 @@ function JournalModalBody() {
   return (
     <>
       <div className="idx-num" style={{ marginBottom: 6 }}>02 / journal</div>
-      <div className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 20, letterSpacing: '-.02em' }}>
+      <h2 className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 20, letterSpacing: '-.02em' }}>
         Things I write down.
-      </div>
+      </h2>
       <div style={{ display: 'flex', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
@@ -1620,22 +1645,25 @@ function JournalModalBody() {
         ))}
       </div>
 
-      {tab === 'thoughts' && C.thoughts.map((t, i) => (
+      <div hidden={tab !== 'thoughts'}>
+      {C.thoughts.map((t, i) => (
         <div key={i} style={{ display: 'grid', gridTemplateColumns: t.date ? '70px 1fr' : '1fr', gap: 16, padding: '16px 0', borderBottom: i < C.thoughts.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           {t.date && <div className="wmono" style={{ fontSize: 11, color: W.accent, letterSpacing: '.08em', paddingTop: 4 }}>{t.date}</div>}
           <div className="wserif" style={{ fontSize: 'clamp(18px,3vw,22px)', lineHeight: 1.45, whiteSpace: 'pre-line' }}>{t.text}</div>
         </div>
       ))}
+      </div>
 
-      {tab === 'poetry' && C.poetry.map((p, i) => (
+      <div hidden={tab !== 'poetry'}>
+      {C.poetry.map((p, i) => (
         <div key={i} style={{ marginBottom: 32, paddingBottom: 24, borderBottom: i < C.poetry.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           <div className="wserif" style={{ fontSize: 'clamp(18px,3vw,20px)', lineHeight: 1.75, whiteSpace: 'pre-line', marginBottom: 10 }}>{p.body}</div>
           <div className="wmono" style={{ fontSize: 12, color: W.inkSoft, letterSpacing: '.06em' }}>— {p.author}</div>
         </div>
       ))}
+      </div>
 
-      {tab === 'recs' && (
-        <>
+      <div hidden={tab !== 'recs'}>
           {C.movies.length > 0 && (
             <>
               <div className="idx-label" style={{ marginBottom: 4 }}>watching</div>
@@ -1661,8 +1689,7 @@ function JournalModalBody() {
           {C.movies.length === 0 && C.books.length === 0 && (
             <div className="wserif" style={{ fontSize: 18, color: W.inkSoft, fontStyle: 'italic', paddingTop: 8 }}>nothing here yet.</div>
           )}
-        </>
-      )}
+      </div>
     </>
   )
 }
@@ -1677,13 +1704,12 @@ function ProjectsModalBody() {
     { id: 'work',    label: 'experience' },
     { id: 'stack',   label: 'stack' },
   ]
-  const isProjects = tab === 'serious' || tab === 'fun'
   return (
     <>
       <div className="idx-num" style={{ marginBottom: 6 }}>04 / work</div>
-      <div className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 20, letterSpacing: '-.02em' }}>
+      <h2 className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 20, letterSpacing: '-.02em' }}>
         Things I&apos;ve built.
-      </div>
+      </h2>
       <div style={{ display: 'flex', gap: 8, marginBottom: 28, flexWrap: 'wrap' }}>
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
@@ -1694,7 +1720,8 @@ function ProjectsModalBody() {
         ))}
       </div>
 
-      {tab === 'stack' && skillGroups.map((g, i) => (
+      <div hidden={tab !== 'stack'}>
+      {skillGroups.map((g, i) => (
         <div key={g.label} style={{ padding: '16px 0', borderBottom: i < skillGroups.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           <div className="idx-label" style={{ marginBottom: 10 }}>{g.label}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -1702,8 +1729,11 @@ function ProjectsModalBody() {
           </div>
         </div>
       ))}
+      </div>
 
-      {isProjects && projectsData[tab].map((p, i, arr) => (
+      {(['serious', 'fun'] as const).map(kind => (
+      <div key={kind} hidden={tab !== kind}>
+      {projectsData[kind].map((p, i, arr) => (
         <div key={p.id} style={{ padding: '20px 0', borderBottom: i < arr.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           <div className="modal-split" style={{ marginBottom: 8 }}>
             <div className="wserif modal-split-main" style={{ fontSize: 26, lineHeight: 1.1 }}>
@@ -1731,8 +1761,11 @@ function ProjectsModalBody() {
           </ul>
         </div>
       ))}
+      </div>
+      ))}
 
-      {tab === 'work' && workData.map((w, i) => (
+      <div hidden={tab !== 'work'}>
+      {workData.map((w, i) => (
         <div key={i} style={{ padding: '20px 0', borderBottom: i < workData.length - 1 ? `1px solid ${W.line}` : 'none' }}>
           <div className="modal-split" style={{ marginBottom: 4 }}>
             <div className="wserif modal-split-main" style={{ fontSize: 24, lineHeight: 1.15 }}>
@@ -1755,6 +1788,7 @@ function ProjectsModalBody() {
           </ul>
         </div>
       ))}
+      </div>
     </>
   )
 }
@@ -1867,24 +1901,26 @@ function WallDesign() {
     { id: 'resume',  label: 'read · resume',                       hint: '↗', run: () => window.open('https://drive.google.com/file/d/16vW-vhHgcTgwvtTlTWnSxrxgZ6bI8VkG/view', '_blank') },
   ]
 
-  if (phase === 'loading') return (
-    <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--wall-bg, #101113)' }}>
-      <WallStyles />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/cat.gif" alt="loading" width={220} height={220}
-        style={{ mixBlendMode: 'screen', filter: 'invert(1)' }} />
-    </div>
-  )
-
   return (
-    <div className={`wall ${inked ? 'inked' : ''}`}>
+    <>
+    {/* The wall renders underneath from the first byte (crawlers read it); the
+        splash covers it and its entrance animations wait until the splash goes. */}
+    {phase === 'loading' && (
+      <div className="wall-splash">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/cat.gif" alt="" width={220} height={220}
+          style={{ mixBlendMode: 'screen', filter: 'invert(1)' }} />
+        <noscript><style>{'html .wall-splash{display:none}html .wall.booting *{animation-play-state:running!important}'}</style></noscript>
+      </div>
+    )}
+    <div className={`wall ${phase === 'loading' ? 'booting' : ''} ${inked ? 'inked' : ''}`}>
       <WallStyles />
       <style>{eqCss}</style>
       <div className="wall-inner">
         {/* Status bar */}
         <header className="statusbar">
           <div className="sb-group">
-            <span style={{ color: 'var(--wall-ink)' }}><ScrambleText text="divy parekh" /></span>
+            <h1 style={{ color: 'var(--wall-ink)' }}><ScrambleText text="divy parekh" /></h1>
             <span className="sb-hide-m">— wall index v2.0</span>
           </div>
           <div className="sb-group">
@@ -2064,21 +2100,21 @@ function WallDesign() {
       <CommandPalette open={palette} onClose={() => setPalette(false)} actions={actions} />
 
       {/* ── MODALS (4) ── */}
-      <WModal open={open === 'journal'} onClose={() => setOpen(null)} wide>
+      <WModal open={open === 'journal'} onClose={() => setOpen(null)} wide label="Journal">
         <JournalModalBody />
       </WModal>
 
-      <WModal open={open === 'songs'} onClose={() => setOpen(null)}>
+      <WModal open={open === 'songs'} onClose={() => setOpen(null)} label="Songs">
         <SongsModalBody spotify={spotify} />
       </WModal>
 
-      <WModal open={open === 'projects'} onClose={() => setOpen(null)} wide>
+      <WModal open={open === 'projects'} onClose={() => setOpen(null)} wide label="Projects and experience">
         <ProjectsModalBody />
       </WModal>
 
-      <WModal open={open === 'about'} onClose={() => setOpen(null)}>
+      <WModal open={open === 'about'} onClose={() => setOpen(null)} label="About Divy">
         <div className="idx-num" style={{ marginBottom: 6 }}>05 / about</div>
-        <div className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 28, letterSpacing: '-.02em' }}>Hi, I&apos;m Divy.</div>
+        <h2 className="wserif" style={{ fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1, marginBottom: 28, letterSpacing: '-.02em' }}>Hi, I&apos;m Divy.</h2>
         <div className="wserif" style={{ fontSize: 'clamp(19px,3vw,22px)', lineHeight: 1.7 }}>
           Nerdy introvert from Ahmedabad. I have spent most of my life happily alone in a room with a laptop and decent Wi-Fi — and I still think that is a perfectly valid Saturday.
           <br /><br />
@@ -2090,6 +2126,7 @@ function WallDesign() {
         </div>
       </WModal>
     </div>
+    </>
   )
 }
 
